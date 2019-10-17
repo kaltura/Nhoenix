@@ -1,0 +1,13 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "description": "Example nhoenix app",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "postinstall": "npm link ../",
+    "postupdate": "npm link ../"
+  },
+  "author": "",
+  "license": "ISC"
+}
