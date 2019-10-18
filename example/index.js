@@ -1,3 +1,4 @@
+const path = require('path');
 const Nhoenix = require('nhoenix');
 
 Nhoenix.configure({
@@ -6,4 +7,5 @@ Nhoenix.configure({
     }
 });
 
-Nhoenix.use();
+Nhoenix.use('./controllers');
+Nhoenix.start();
