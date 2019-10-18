@@ -14,7 +14,7 @@ describe('validate', function() {
 
     describe('objects', function() {
 
-        it('in module', function() {
+        it('in-module', function() {
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
 
@@ -71,6 +71,55 @@ describe('validate', function() {
             parser.controllers([writeSource(src)]);
         });
         
+        it('nested', function() {
+            const src = `
+                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
+                /**
+                 * Nested object
+                 */
+                class KalturaNested extends Nhoenix.KalturaObject {
+                
+                    /**
+                     * Integer property
+                     * @property prop
+                     * @type {number}
+                     */
+                    Prop() {}
+                }
+                
+                /**
+                 * Test object
+                 */
+                class KalturaTest extends Nhoenix.KalturaObject {
+                
+                    /**
+                     * Integer property
+                     * @property nested
+                     * @type {KalturaNested}
+                     */
+                    Nested() {}
+                }
+
+                /**
+                 * Test
+                 * @service test
+                 */
+                const controller = {
+                    /**
+                     * Do nothing
+                     * @param {KalturaTest} obj The object
+                     * @action doNothing
+                     */
+                    doNothing: (obj) => {
+                        return 1;
+                    }
+                };                
+                module.exports = controller;`;
+
+            parser.controllers([writeSource(src)]);
+        });
+
         it('required class', function() {
             const objectSource = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -116,6 +165,7 @@ describe('validate', function() {
         });
                 
         it('required classes', function() {
+            this.timeout(10000);
             const objectSource = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
 
@@ -134,7 +184,7 @@ describe('validate', function() {
                 /**
                  * Test object
                  */
-                class KalturaTest2 extends Nhoenix.KalturaObject {                
+                class KalturaTest2 extends KalturaTest1 {                
                     /**
                      * Test property
                      * @property test
@@ -230,5 +280,8 @@ describe('validate', function() {
 
             parser.controllers([writeSource(controllerSource)]);
         });
+
+        
+        // TODO object properties (valid, required, required multiple levels and missing)
     });
 });

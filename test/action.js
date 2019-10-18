@@ -1,5 +1,6 @@
 const fs = require('fs');
 const tmp = require('tmp');
+const path = require('path');
 const assert = require('assert');
 const parser = require('../lib/parser.js');
 
@@ -23,9 +24,9 @@ describe('validate', function() {
                     /**
                      * Do nothing
                      * @action doNothing
+                     * @returns {number}
                      */
                     doNothing: () => {
-                        return 1;
                     }
                 };                
                 module.exports = controller;`;
@@ -44,7 +45,6 @@ describe('validate', function() {
                      * Do nothing
                      */
                     doNothing: () => {
-                        return 1;
                     }
                 };                
                 module.exports = controller;`;
@@ -70,7 +70,6 @@ describe('validate', function() {
                      * @action doNothing
                      */
                     doNothing: () => {
-                        return 1;
                     }
                 };                
                 module.exports = controller;`;
@@ -97,7 +96,6 @@ describe('validate', function() {
                      * @action doNothing
                      */
                     doNothing: () => {
-                        return 1;
                     }
                 };                
                 module.exports = controller;`;
@@ -124,7 +122,6 @@ describe('validate', function() {
                      * @action doNothing
                      */
                     doNothing: () => {
-                        return 1;
                     }
                 };                
                 module.exports = controller;`;
@@ -151,7 +148,6 @@ describe('validate', function() {
                      * @action DoNothing
                      */
                     doNothing: () => {
-                        return 1;
                     }
                 };                
                 module.exports = controller;`;
@@ -178,7 +174,6 @@ describe('validate', function() {
                      * @action 1doNothing
                      */
                     doNothing: () => {
-                        return 1;
                     }
                 };                
                 module.exports = controller;`;
@@ -205,7 +200,6 @@ describe('validate', function() {
                      * @action doNothing_
                      */
                     doNothing: () => {
-                        return 1;
                     }
                 };                
                 module.exports = controller;`;
@@ -245,6 +239,180 @@ describe('validate', function() {
             assert.fail('Validation should have fail');
         });
         
-        // TODO return type
+        it('invalid return type', function() {
+            const src = `
+                /**
+                 * Test
+                 * @service test
+                 */
+                const controller = {
+                    /**
+                     * Do nothing
+                     * @action doNothing
+                     * @returns {invalid}
+                     */
+                    doNothing: () => {
+                    }
+                };                
+                module.exports = controller;`;
+
+            try {
+                parser.controllers([writeSource(src)]);
+            }
+            catch(e) {
+                assert.equal(e, 'Action [test.doNothing] invalid return type [invalid]');
+                return;
+            }
+            assert.fail('Validation should have fail');
+        });
+
+        it('object return type', function() {
+            const src = `
+                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
+                /**
+                 * Test object
+                 */
+                class KalturaTest extends Nhoenix.KalturaObject {
+                    /**
+                     * Test property
+                     * @property test
+                     * @type {number}
+                     */
+                    Test() {}
+                }
+
+                /**
+                 * Test
+                 * @service test
+                 */
+                const controller = {
+                    /**
+                     * Do nothing
+                     * @action doNothing
+                     * @returns {KalturaTest}
+                     */
+                    doNothing: () => {
+                    }
+                };                
+                module.exports = controller;`;
+
+            parser.controllers([writeSource(src)]);
+        });
+        
+        it('object return type', function() {
+            const src = `
+                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
+                /**
+                 * Test object
+                 */
+                class KalturaTest extends Nhoenix.KalturaObject {
+                    /**
+                     * Test property
+                     * @property test
+                     * @type {number}
+                     */
+                    Test() {}
+                }
+
+                /**
+                 * Test
+                 * @service test
+                 */
+                const controller = {
+                    /**
+                     * Do nothing
+                     * @action doNothing
+                     * @returns {KalturaTest}
+                     */
+                    doNothing: () => {
+                    }
+                };                
+                module.exports = controller;`;
+
+            parser.controllers([writeSource(src)]);
+        });
+        
+        it('valid arg', function() {
+            const src = `
+                /**
+                 * Test
+                 * @service test
+                 */
+                const controller = {
+                    /**
+                     * Do nothing
+                     * @param {string} par Object argument
+                     * @action doNothing
+                     */
+                    doNothing: (par) => {
+                    }
+                };                
+                module.exports = controller;`;
+
+            parser.controllers([writeSource(src)]);
+        });
+        
+        it('object arg', function() {
+            const src = `
+                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
+                /**
+                 * Test object
+                 */
+                class KalturaTest extends Nhoenix.KalturaObject {
+                    /**
+                     * Test property
+                     * @property test
+                     * @type {number}
+                     */
+                    Test() {}
+                }
+
+                /**
+                 * Test
+                 * @service test
+                 */
+                const controller = {
+                    /**
+                     * Do nothing
+                     * @param {KalturaTest} par Object argument
+                     * @action doNothing
+                     */
+                    doNothing: (par) => {
+                    }
+                };                
+                module.exports = controller;`;
+
+            parser.controllers([writeSource(src)]);
+        });
+
+        it('invalid arg', function() {
+            const src = `
+                /**
+                 * Test
+                 * @service test
+                 */
+                const controller = {
+                    /**
+                     * Do nothing
+                     * @param {KalturaTest} par Object argument
+                     * @action doNothing
+                     */
+                    doNothing: (par) => {
+                    }
+                };                
+                module.exports = controller;`;
+
+            try {
+                parser.controllers([writeSource(src)]);
+            }
+            catch(e) {
+                assert.equal(e, 'Action [test.doNothing] argument [0] invalid type [KalturaTest]');
+                return;
+            }
+            assert.fail('Validation should have fail');
+        });
     });
 });
