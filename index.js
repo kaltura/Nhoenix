@@ -71,27 +71,77 @@ var KalturaExceptionTypes = {
     INVALID_ACTION: new KalturaExceptionType('INVALID_ACTION', 'Action [{service}.{action}] not found'),
     ACTION_NOT_SPECIFIED: new KalturaExceptionType('ACTION_NOT_SPECIFIED', 'Action not specified'),
     ARGUMENT_CANNOT_BE_EMPTY: new KalturaExceptionType('ARGUMENT_CANNOT_BE_EMPTY', 'Argument [{argument}] cannot be empty'),
+    ARGUMENT_MUST_BE_NUMERIC: new KalturaExceptionType('ARGUMENT_MUST_BE_NUMERIC', 'Argument [{argument}] must be numeric'),
+    ARGUMENT_MIN_LENGTH_CROSSED: new KalturaExceptionType('ARGUMENT_MIN_LENGTH_CROSSED', 'Argument [{argument}] minimum length is [{value}]'),
+    ARGUMENT_MAX_LENGTH_CROSSED: new KalturaExceptionType('ARGUMENT_MAX_LENGTH_CROSSED', 'Argument [{argument}] maximum length is [{value}]'),
+    ARGUMENT_MIN_VALUE_CROSSED: new KalturaExceptionType('ARGUMENT_MIN_VALUE_CROSSED', 'Argument [{argument}] minimum value is [{value}]'),
+    ARGUMENT_MAX_VALUE_CROSSED: new KalturaExceptionType('ARGUMENT_MAX_VALUE_CROSSED', 'Argument [{argument}] maximum value is [{value}]'),
+    INVALID_AGRUMENT_VALUE: new KalturaExceptionType('ARGUMENT_MAX_VALUE_CROSSED', 'Argument [{argument}] value must be of type [{value}]'),
 };
 
-function validateArgument(arg, value) {
-    // TODO
+function parseArgument(arg, value) {
+    switch(arg.type) {
+        case 'time':
+        case 'number':
+            if(isNaN(value)) {
+                throw new KalturaAPIException(KalturaExceptionTypes.ARGUMENT_MUST_BE_NUMERIC, {argument: arg.name});
+            }
+            value = parseInt(value);
+            if(arg.minValue && value < arg.minValue) {
+                throw new KalturaAPIException(KalturaExceptionTypes.ARGUMENT_MIN_VALUE_CROSSED, {argument: arg.name, value: arg.minValue});
+            }
+            if(arg.maxValue && value > arg.maxValue) {
+                throw new KalturaAPIException(KalturaExceptionTypes.ARGUMENT_MAX_VALUE_CROSSED, {argument: arg.name, value: arg.maxValue});
+            }
+            return value;
+
+        case 'string':
+            value = value.toString();
+            if(arg.minLength && value < arg.minLength) {
+                throw new KalturaAPIException(KalturaExceptionTypes.ARGUMENT_MIN_LENGTH_CROSSED, {argument: arg.name, value: arg.minLength});
+            }
+            if(arg.maxLength && value > arg.maxLength) {
+                throw new KalturaAPIException(KalturaExceptionTypes.ARGUMENT_MAX_LENGTH_CROSSED, {argument: arg.name, value: arg.maxLength});
+            }
+            return value;
+            
+        case 'boolean':
+            switch(value) {
+                case 1:
+                case '1':
+                case true:
+                case 'true':
+                    return true;
+                    
+                case 0:
+                case '0':
+                case false:
+                case 'false':
+                    return false;
+
+                default:
+                    throw new KalturaAPIException(KalturaExceptionTypes.INVALID_AGRUMENT_VALUE, {argument: arg.name, value: 'boolean'});
+            }
+        
+        default:
+            // TODO check objectType
+            var obj = new arg.objectType.class();
+            Object.assign(obj, value);
+            return obj;
+    }
 }
 
 function handleAction(action, request) {
     var args = [];
     if(action.args) {
-        args = action.args.map(arg => {            
-            if(request[arg.name]) {
-                var value = request[arg.name];
-                validateArgument(arg, value);
-                return value;
-            }
-            else {
+        args = action.args.map(arg => {   
+            if(request[arg.name] == null || typeof request[arg.name] == 'undefined') {
                 if(!arg.optional) {
                     throw new KalturaAPIException(KalturaExceptionTypes.ARGUMENT_CANNOT_BE_EMPTY, {argument: arg.name});
                 }
                 return null;
             }
+            return parseArgument(arg, request[arg.name]);
         });
     }
     var ret = action.method.apply(null, args);
@@ -122,6 +172,7 @@ async function handle(service, action, request, response) {
         });
     }
     catch(err) {
+        console.error(err);
         if(! err instanceof KalturaAPIException) {
             err = new KalturaAPIException(KalturaExceptionTypes.INTERNAL_SERVER_ERROR);
         }

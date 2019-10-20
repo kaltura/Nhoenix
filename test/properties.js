@@ -12,7 +12,7 @@ function writeSource(src) {
 
 describe('validate', function() {
 
-    describe('objects', function() {
+    describe('properties', function() {
 
         it('valid', function() {
             const src = `
@@ -57,6 +57,8 @@ describe('validate', function() {
                  * @service test
                  */
                 const controller = {
+                    KalturaTest: KalturaTest,
+
                     /**
                      * Do nothing
                      * @param {KalturaTest} obj The object
@@ -106,6 +108,9 @@ describe('validate', function() {
                  * @service test
                  */
                 const controller = {
+                    KalturaNested: KalturaNested,
+                    KalturaTest: KalturaTest,
+
                     /**
                      * Do nothing
                      * @param {KalturaTest} obj The object
@@ -164,6 +169,8 @@ describe('validate', function() {
                  * @service test
                  */
                 const controller = {
+                    KalturaTest2: KalturaTest2,
+
                     /**
                      * Do nothing
                      * @param {KalturaTest2} obj The object
@@ -200,6 +207,8 @@ describe('validate', function() {
                  * @service test
                  */
                 const controller = {
+                    KalturaTest: KalturaTest,
+
                     /**
                      * Do nothing
                      * @param {KalturaTest} obj The object
@@ -243,6 +252,8 @@ describe('validate', function() {
                  * @service test
                  */
                 const controller = {
+                    KalturaTest: KalturaTest,
+
                     /**
                      * Do nothing
                      * @param {KalturaTest} obj The object
@@ -286,6 +297,8 @@ describe('validate', function() {
                  * @service test
                  */
                 const controller = {
+                    KalturaTest: KalturaTest,
+
                     /**
                      * Do nothing
                      * @param {KalturaTest} obj The object
@@ -328,6 +341,8 @@ describe('validate', function() {
                  * @service test
                  */
                 const controller = {
+                    KalturaTest: KalturaTest,
+
                     /**
                      * Do nothing
                      * @param {KalturaTest} obj The object
@@ -371,6 +386,8 @@ describe('validate', function() {
                  * @service test
                  */
                 const controller = {
+                    KalturaTest: KalturaTest,
+
                     /**
                      * Do nothing
                      * @param {KalturaTest} obj The object

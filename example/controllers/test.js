@@ -8,28 +8,14 @@ class KalturaTest extends Nhoenix.KalturaObject {
 
     /**
      * Integer property
+     * @property int
      * @type {number}
      */
-    int = 0
+    Int() {}
 
-    /**
-     * String property
-     * @type {string}
-     */
-    str = null
-
-    /**
-     * Boolean property
-     * @type {boolean}
-     */
-    bl = null
-
-    /**
-     * Time property
-     * @type {time}
-     */
-    tim = null
-
+    multiply() {
+        return this.Int() * 2;
+    }
 }
 
 /**
@@ -37,6 +23,8 @@ class KalturaTest extends Nhoenix.KalturaObject {
  * @service test
  */
 const controller = {
+    KalturaTest: KalturaTest,
+
     /**
      * Do nothing
      * @action doNothing
@@ -83,6 +71,26 @@ const controller = {
      */
     promise: (a, b) => {
         return Promise.resolve(`Promise: ${a}${b}`);
+    },
+
+    /**
+     * Return object property
+     * @action objectProperty
+     * @param {KalturaTest} obj The object
+     * @returns {number}
+     */
+    objectProperty: (obj) => {
+        return obj.Int();
+    },
+
+    /**
+     * Return object method
+     * @action objectMethod
+     * @param {KalturaTest} obj The object
+     * @returns {number}
+     */
+    objectMethod: (obj) => {
+        return obj.multiply();
     },
 };
 

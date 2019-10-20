@@ -287,40 +287,8 @@ describe('validate', function() {
                  * @service test
                  */
                 const controller = {
-                    /**
-                     * Do nothing
-                     * @action doNothing
-                     * @returns {KalturaTest}
-                     */
-                    doNothing: () => {
-                    }
-                };                
-                module.exports = controller;`;
+                    KalturaTest: KalturaTest,
 
-            parser.controllers([writeSource(src)]);
-        });
-        
-        it('object return type', function() {
-            const src = `
-                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
-
-                /**
-                 * Test object
-                 */
-                class KalturaTest extends Nhoenix.KalturaObject {
-                    /**
-                     * Test property
-                     * @property test
-                     * @type {number}
-                     */
-                    Test() {}
-                }
-
-                /**
-                 * Test
-                 * @service test
-                 */
-                const controller = {
                     /**
                      * Do nothing
                      * @action doNothing
@@ -375,6 +343,8 @@ describe('validate', function() {
                  * @service test
                  */
                 const controller = {
+                    KalturaTest: KalturaTest,
+                    
                     /**
                      * Do nothing
                      * @param {KalturaTest} par Object argument

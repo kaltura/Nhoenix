@@ -36,6 +36,8 @@ describe('validate', function() {
                  * @service test
                  */
                 const controller = {
+                    KalturaTest: KalturaTest,
+
                     /**
                      * Do nothing
                      * @param {KalturaTest} obj The object
@@ -341,6 +343,8 @@ describe('validate', function() {
                  * @service test
                  */
                 const controller = {
+                    KalturaTest: KalturaTest,
+                    
                     /**
                      * Do nothing
                      * @param {KalturaTest} obj The object
@@ -397,6 +401,9 @@ describe('validate', function() {
                  * @service test
                  */
                 const controller = {
+                    KalturaBase: KalturaBase,
+                    KalturaTest: KalturaTest,
+                    
                     /**
                      * Do nothing
                      * @param {KalturaTest} obj The object
@@ -413,6 +420,48 @@ describe('validate', function() {
             }
             catch(e) {
                 assert.equal(e, 'Type [KalturaBase] base class [Base] is not known as KalturaObject');
+                return;
+            }
+            assert.fail('Validation should have fail');
+        });
+        
+        it('not exported', function() {
+            const src = `
+                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
+                /**
+                 * Test object
+                 */
+                class KalturaTest extends Nhoenix.KalturaObject {                
+                    /**
+                     * Test property
+                     * @property test
+                     * @type {number}
+                     */
+                    Test() {}
+                }
+                
+                /**
+                 * Test
+                 * @service test
+                 */
+                const controller = {
+                    /**
+                     * Do nothing
+                     * @param {KalturaTest} obj The object
+                     * @action doNothing
+                     */
+                    doNothing: (obj) => {
+                        return 1;
+                    }
+                };                
+                module.exports = controller;`;
+
+            try {
+                parser.controllers([writeSource(src)]);
+            }
+            catch(e) {
+                assert.equal(e, 'Type [KalturaTest] must be exported in its module');
                 return;
             }
             assert.fail('Validation should have fail');
@@ -439,6 +488,8 @@ describe('validate', function() {
                  * @service test
                  */
                 const controller = {
+                    kalturaTest: kalturaTest,
+                    
                     /**
                      * Do nothing
                      * @param {kalturaTest} obj The object
@@ -481,6 +532,8 @@ describe('validate', function() {
                  * @service test
                  */
                 const controller = {
+                    KalturaTest1: KalturaTest1,
+
                     /**
                      * Do nothing
                      * @param {KalturaTest1} obj The object
