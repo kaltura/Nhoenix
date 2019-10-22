@@ -12,8 +12,13 @@ class KalturaObject {
     static implementProperties(clazz) {
         if(clazz.implemented) {
             return;
-        }        
+        }
         clazz.implemented = true;
+
+        var base = Object.getPrototypeOf(clazz);
+        if(base.name !== 'KalturaObject') {
+            KalturaObject.implementProperties(base);
+        }
 
         var doc = jsdoc.explainSync({source: clazz.toString()});
         var properties = doc.filter(comment => comment.properties);
@@ -77,9 +82,11 @@ var KalturaExceptionTypes = {
     ARGUMENT_MIN_VALUE_CROSSED: new KalturaExceptionType('ARGUMENT_MIN_VALUE_CROSSED', 'Argument [{argument}] minimum value is [{value}]'),
     ARGUMENT_MAX_VALUE_CROSSED: new KalturaExceptionType('ARGUMENT_MAX_VALUE_CROSSED', 'Argument [{argument}] maximum value is [{value}]'),
     INVALID_AGRUMENT_VALUE: new KalturaExceptionType('ARGUMENT_MAX_VALUE_CROSSED', 'Argument [{argument}] value must be of type [{value}]'),
+    TYPE_NOT_SUPPORTED: new KalturaExceptionType('TYPE_NOT_SUPPORTED', 'Type [{value}] is not supported for argument [{argument}]'),
+    ABSTRACT_PARAMETER: new KalturaExceptionType('ABSTRACT_PARAMETER', 'Abstract parameter type [{type}]'),
 };
 
-function parseArgument(arg, value) {
+function parseValue(arg, value) {
     switch(arg.type) {
         case 'time':
         case 'number':
@@ -97,10 +104,10 @@ function parseArgument(arg, value) {
 
         case 'string':
             value = value.toString();
-            if(arg.minLength && value < arg.minLength) {
+            if(arg.minLength && value.length < arg.minLength) {
                 throw new KalturaAPIException(KalturaExceptionTypes.ARGUMENT_MIN_LENGTH_CROSSED, {argument: arg.name, value: arg.minLength});
             }
-            if(arg.maxLength && value > arg.maxLength) {
+            if(arg.maxLength && value.length > arg.maxLength) {
                 throw new KalturaAPIException(KalturaExceptionTypes.ARGUMENT_MAX_LENGTH_CROSSED, {argument: arg.name, value: arg.maxLength});
             }
             return value;
@@ -124,9 +131,34 @@ function parseArgument(arg, value) {
             }
         
         default:
-            // TODO check objectType
-            var obj = new arg.objectType.class();
-            Object.assign(obj, value);
+            var type = arg.objectType;
+            if(value.objectType && value.objectType != type.name) {
+                if(!type.children[value.objectType]) {
+                    throw new KalturaAPIException(KalturaExceptionTypes.TYPE_NOT_SUPPORTED, {argument: arg.name, value: value.objectType});
+                }
+                type = type.children[value.objectType];
+            }
+            if(type.abstract) {
+                throw new KalturaAPIException(KalturaExceptionTypes.ABSTRACT_PARAMETER, {type: type.name});                
+            }
+            
+            var obj = new type.class();
+            type.properties.forEach(property => {
+                if(value[property.name] !== undefined) {
+                    obj[property.name] = parseValue(property, value[property.name]);
+                }
+            });
+            
+            var baseType = type.baseType;
+            while(baseType) {
+                baseType.properties.forEach(property => {
+                    if(value[property.name] !== undefined) {
+                        obj[property.name] = parseValue(property, value[property.name]);
+                    }
+                });
+                baseType = baseType.baseType;
+            }
+            
             return obj;
     }
 }
@@ -141,31 +173,38 @@ function handleAction(action, request) {
                 }
                 return null;
             }
-            return parseArgument(arg, request[arg.name]);
+            return parseValue(arg, request[arg.name]);
         });
     }
     var ret = action.method.apply(null, args);
-    // TODO validate type
+    if(!action.returnType) {
+        return null;
+    }
+    
     return ret;
+}
+
+function handleRequest(service, action, request) {
+    if(!service) {
+        throw new KalturaAPIException(KalturaExceptionTypes.INVALID_SERVICE);
+    }
+    if(!action) {
+        throw new KalturaAPIException(KalturaExceptionTypes.ACTION_NOT_SPECIFIED);
+    }
+    if(!Nhoenix.controllers[service]) {
+        throw new KalturaAPIException(KalturaExceptionTypes.INVALID_SERVICE, {service: service});
+    }
+    if(!Nhoenix.controllers[service].actions[action]) {
+        throw new KalturaAPIException(KalturaExceptionTypes.INVALID_ACTION, {service: service, action: action});
+    }
+
+    return handleAction(Nhoenix.controllers[service].actions[action], request);
 }
 
 async function handle(service, action, request, response) {
     response.startTime = Date.now();
     try{
-        if(!service) {
-            throw new KalturaAPIException(KalturaExceptionTypes.INVALID_SERVICE);
-        }
-        if(!action) {
-            throw new KalturaAPIException(KalturaExceptionTypes.ACTION_NOT_SPECIFIED);
-        }
-        if(!Nhoenix.controllers[service]) {
-            throw new KalturaAPIException(KalturaExceptionTypes.INVALID_SERVICE, {service: service});
-        }
-        if(!Nhoenix.controllers[service].actions[action]) {
-            throw new KalturaAPIException(KalturaExceptionTypes.INVALID_ACTION, {service: service, action: action});
-        }
-
-        var result = await handleAction(Nhoenix.controllers[service].actions[action], request);
+        var result = await handleRequest(service, action, request);
         response.send({
             executionTime: (Date.now() - response.startTime),
             result: result
@@ -227,6 +266,8 @@ module.exports = {
         }
         Nhoenix.controllers = parser.controllers(controllers);
     },
+
+    test: handleRequest,
 
     start: Nhoenix.start
 };

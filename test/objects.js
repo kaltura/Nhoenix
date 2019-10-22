@@ -10,549 +10,554 @@ function writeSource(src) {
     return filename;
 }
 
-describe('validate', function() {
+describe('objects', function() {
 
-    describe('objects', function() {
+    it('in-module', function() {
+        this.timeout(10000);
+        const src = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
 
-        it('in-module', function() {
-            const src = `
-                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+            /**
+             * Test object
+             */
+            class KalturaTest extends Nhoenix.KalturaObject {
+            
+                /**
+                 * Integer property
+                 * @property int
+                 * @type {number}
+                 */
+                Int() {}
+            }
+            
+            /**
+             * Test
+             * @service test
+             */
+            const controller = {
+                KalturaTest: KalturaTest,
 
                 /**
-                 * Test object
+                 * Do nothing
+                 * @param {KalturaTest} obj The object
+                 * @action doNothing
                  */
-                class KalturaTest extends Nhoenix.KalturaObject {
-                
-                    /**
-                     * Integer property
-                     * @property int
-                     * @type {number}
-                     */
-                    Int() {}
+                doNothing: (obj) => {
+                    return 1;
                 }
-                
+            };                
+            module.exports = controller;`;
+
+        parser.controllers([writeSource(src)]);
+    });
+    
+    it('required class', function() {
+        this.timeout(10000);
+        const objectSource = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
+            /**
+             * Test object
+             */
+            class KalturaTest extends Nhoenix.KalturaObject {                
                 /**
-                 * Test
-                 * @service test
+                 * Test property
+                 * @property test
+                 * @type {number}
                  */
-                const controller = {
-                    KalturaTest: KalturaTest,
+                Test() {}
+            }
+                        
+            module.parse = true;
+            module.exports = {
+                KalturaTest: KalturaTest
+            };`;
 
-                    /**
-                     * Do nothing
-                     * @param {KalturaTest} obj The object
-                     * @action doNothing
-                     */
-                    doNothing: (obj) => {
-                        return 1;
-                    }
-                };                
-                module.exports = controller;`;
+        const objectSourcePath = writeSource(objectSource).replace(/\\/g, '\\\\');
+        const controllerSource = `
+            const KalturaTest = require('${objectSourcePath}').KalturaTest;
+            
+            /**
+             * Test
+             * @service test
+             */
+            const controller = {
+                /**
+                 * Do nothing
+                 * @param {KalturaTest} obj The object
+                 * @action doNothing
+                 */
+                doNothing: (obj) => {
+                    return 1;
+                }
+            };                
+            module.exports = controller;`;
 
+        parser.controllers([writeSource(controllerSource)]);
+    });
+            
+    it('required classes', function() {
+        this.timeout(10000);
+        const objectSource = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
+            /**
+             * Test object
+             */
+            class KalturaTest1 extends Nhoenix.KalturaObject {                
+                /**
+                 * Test property
+                 * @property test
+                 * @type {number}
+                 */
+                Test() {}
+            }
+                    
+            /**
+             * Test object
+             */
+            class KalturaTest2 extends KalturaTest1 {                
+                /**
+                 * Test property
+                 * @property test
+                 * @type {number}
+                 */
+                Test() {}
+            }
+                        
+            module.parse = true;
+            module.exports = {
+                KalturaTest1: KalturaTest1,
+                KalturaTest2: KalturaTest2,
+            };`;
+
+        const objectSourcePath = writeSource(objectSource).replace(/\\/g, '\\\\');
+        const controllerSource = `
+            const kalturaTypes = require('${objectSourcePath}');
+            const {KalturaTest1, KalturaTest2} = kalturaTypes;
+            
+            /**
+             * Test
+             * @service test
+             */
+            const controller = {
+                /**
+                 * Do nothing
+                 * @param {KalturaTest1} obj The object
+                 * @action doNothing
+                 */
+                doNothing: (obj) => {
+                    return 1;
+                }
+            };                
+            module.exports = controller;`;
+
+        parser.controllers([writeSource(controllerSource)]);
+    });
+    
+            
+    it('moduled classes', function() {
+        this.timeout(10000);
+        const objectSource = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
+            /**
+             * Test object
+             */
+            class KalturaTest1 extends Nhoenix.KalturaObject {                
+                /**
+                 * Test property
+                 * @property test
+                 * @type {number}
+                 */
+                Test() {}
+            }
+                    
+            /**
+             * Test object
+             */
+            class KalturaTest2 extends Nhoenix.KalturaObject {                
+                /**
+                 * Test property
+                 * @property test
+                 * @type {number}
+                 */
+                Test() {}
+            }
+            
+            module.parse = true;
+            module.exports = {
+                KalturaTest1: KalturaTest1,
+                KalturaTest2: KalturaTest2,
+            };`;
+
+        const objectSourcePath = writeSource(objectSource).replace(/\\/g, '\\\\');
+        const controllerSource = `
+            const kalturaTypes = require('${objectSourcePath}');
+            
+            /**
+             * Test
+             * @service test
+             */
+            const controller = {
+                /**
+                 * Do nothing
+                 * @param {KalturaTest2} obj The object
+                 * @action doNothing
+                 */
+                doNothing: (obj) => {
+                    return 1;
+                }
+            };                
+            module.exports = controller;`;
+
+        parser.controllers([writeSource(controllerSource)]);
+    });
+    
+    it('extend required', function() {
+        this.timeout(10000);
+        const objectSource1 = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
+            /**
+             * Test object
+             */
+            class KalturaTest1 extends Nhoenix.KalturaObject {                
+                /**
+                 * Test property
+                 * @property test
+                 * @type {number}
+                 */
+                Test() {}
+            }
+                    
+            module.parse = true;
+            module.exports = {
+                KalturaTest1: KalturaTest1,
+            };`;
+
+        const objectSource1Path = writeSource(objectSource1).replace(/\\/g, '\\\\');
+        const objectSource2 = `
+        const kalturaTypes = require('${objectSource1Path}');
+                    
+            /**
+             * Test object
+             */
+            class KalturaTest2 extends kalturaTypes.KalturaTest1 {                
+                /**
+                 * Test property
+                 * @property test
+                 * @type {number}
+                 */
+                Test() {}
+            }
+            
+            module.parse = true;
+            module.exports = {
+                KalturaTest2: KalturaTest2,
+            };`;
+
+        const objectSource2Path = writeSource(objectSource2).replace(/\\/g, '\\\\');
+        const controllerSource = `
+            const kalturaTypes = require('${objectSource2Path}');
+            
+            /**
+             * Test
+             * @service test
+             */
+            const controller = {
+                /**
+                 * Do nothing
+                 * @param {KalturaTest2} obj The object
+                 * @action doNothing
+                 */
+                doNothing: (obj) => {
+                    return 1;
+                }
+            };                
+            module.exports = controller;`;
+
+        parser.controllers([writeSource(controllerSource)]);
+    });
+    
+    it('no base', function() {
+        this.timeout(10000);
+        const src = `
+            /**
+             * Test object
+             */
+            class KalturaTest {
+            
+                /**
+                 * Integer property
+                 * @property int
+                 * @type {number}
+                 */
+                Int() {}
+            }
+            
+            /**
+             * Test
+             * @service test
+             */
+            const controller = {
+                /**
+                 * Do nothing
+                 * @param {KalturaTest} obj The object
+                 * @action doNothing
+                 */
+                doNothing: (obj) => {
+                    return 1;
+                }
+            };                
+            module.exports = controller;`;
+
+        try {
             parser.controllers([writeSource(src)]);
-        });
-        
-        it('required class', function() {
-            const objectSource = `
-                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+        }
+        catch(e) {
+            assert.equal(e, 'Type [KalturaTest] should extend from KalturaObject');
+            return;
+        }
+        assert.fail('Validation should have fail');
+    });
+    
+    it('non-kaltura base', function() {
+        this.timeout(10000);
+        const src = `
+            class Base {}
 
+            /**
+             * Test object
+             */
+            class KalturaTest extends Base {
+            
                 /**
-                 * Test object
+                 * Integer property
+                 * @property int
+                 * @type {number}
                  */
-                class KalturaTest extends Nhoenix.KalturaObject {                
-                    /**
-                     * Test property
-                     * @property test
-                     * @type {number}
-                     */
-                    Test() {}
-                }
-                         
-                module.parse = true;
-                module.exports = {
-                    KalturaTest: KalturaTest
-                };`;
-
-            const objectSourcePath = writeSource(objectSource).replace(/\\/g, '\\\\');
-            const controllerSource = `
-                const KalturaTest = require('${objectSourcePath}').KalturaTest;
-                
-                /**
-                 * Test
-                 * @service test
-                 */
-                const controller = {
-                    /**
-                     * Do nothing
-                     * @param {KalturaTest} obj The object
-                     * @action doNothing
-                     */
-                    doNothing: (obj) => {
-                        return 1;
-                    }
-                };                
-                module.exports = controller;`;
-
-            parser.controllers([writeSource(controllerSource)]);
-        });
-                
-        it('required classes', function() {
-            this.timeout(10000);
-            const objectSource = `
-                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
-
-                /**
-                 * Test object
-                 */
-                class KalturaTest1 extends Nhoenix.KalturaObject {                
-                    /**
-                     * Test property
-                     * @property test
-                     * @type {number}
-                     */
-                    Test() {}
-                }
-                     
-                /**
-                 * Test object
-                 */
-                class KalturaTest2 extends KalturaTest1 {                
-                    /**
-                     * Test property
-                     * @property test
-                     * @type {number}
-                     */
-                    Test() {}
-                }
-                         
-                module.parse = true;
-                module.exports = {
-                    KalturaTest1: KalturaTest1,
-                    KalturaTest2: KalturaTest2,
-                };`;
-
-            const objectSourcePath = writeSource(objectSource).replace(/\\/g, '\\\\');
-            const controllerSource = `
-                const kalturaTypes = require('${objectSourcePath}');
-                const {KalturaTest1, KalturaTest2} = kalturaTypes;
-                
-                /**
-                 * Test
-                 * @service test
-                 */
-                const controller = {
-                    /**
-                     * Do nothing
-                     * @param {KalturaTest1} obj The object
-                     * @action doNothing
-                     */
-                    doNothing: (obj) => {
-                        return 1;
-                    }
-                };                
-                module.exports = controller;`;
-
-            parser.controllers([writeSource(controllerSource)]);
-        });
-        
-                
-        it('moduled classes', function() {
-            this.timeout(10000);
-            const objectSource = `
-                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
-
-                /**
-                 * Test object
-                 */
-                class KalturaTest1 extends Nhoenix.KalturaObject {                
-                    /**
-                     * Test property
-                     * @property test
-                     * @type {number}
-                     */
-                    Test() {}
-                }
-                     
-                /**
-                 * Test object
-                 */
-                class KalturaTest2 extends Nhoenix.KalturaObject {                
-                    /**
-                     * Test property
-                     * @property test
-                     * @type {number}
-                     */
-                    Test() {}
-                }
-                
-                module.parse = true;
-                module.exports = {
-                    KalturaTest1: KalturaTest1,
-                    KalturaTest2: KalturaTest2,
-                };`;
-
-            const objectSourcePath = writeSource(objectSource).replace(/\\/g, '\\\\');
-            const controllerSource = `
-                const kalturaTypes = require('${objectSourcePath}');
-                
-                /**
-                 * Test
-                 * @service test
-                 */
-                const controller = {
-                    /**
-                     * Do nothing
-                     * @param {KalturaTest2} obj The object
-                     * @action doNothing
-                     */
-                    doNothing: (obj) => {
-                        return 1;
-                    }
-                };                
-                module.exports = controller;`;
-
-            parser.controllers([writeSource(controllerSource)]);
-        });
-        
-        it('extend required', function() {
-            this.timeout(10000);
-            const objectSource1 = `
-                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
-
-                /**
-                 * Test object
-                 */
-                class KalturaTest1 extends Nhoenix.KalturaObject {                
-                    /**
-                     * Test property
-                     * @property test
-                     * @type {number}
-                     */
-                    Test() {}
-                }
-                     
-                module.parse = true;
-                module.exports = {
-                    KalturaTest1: KalturaTest1,
-                };`;
-
-            const objectSource1Path = writeSource(objectSource1).replace(/\\/g, '\\\\');
-            const objectSource2 = `
-            const kalturaTypes = require('${objectSource1Path}');
-                     
-                /**
-                 * Test object
-                 */
-                class KalturaTest2 extends kalturaTypes.KalturaTest1 {                
-                    /**
-                     * Test property
-                     * @property test
-                     * @type {number}
-                     */
-                    Test() {}
-                }
-                
-                module.parse = true;
-                module.exports = {
-                    KalturaTest2: KalturaTest2,
-                };`;
-
-            const objectSource2Path = writeSource(objectSource2).replace(/\\/g, '\\\\');
-            const controllerSource = `
-                const kalturaTypes = require('${objectSource2Path}');
-                
-                /**
-                 * Test
-                 * @service test
-                 */
-                const controller = {
-                    /**
-                     * Do nothing
-                     * @param {KalturaTest2} obj The object
-                     * @action doNothing
-                     */
-                    doNothing: (obj) => {
-                        return 1;
-                    }
-                };                
-                module.exports = controller;`;
-
-            parser.controllers([writeSource(controllerSource)]);
-        });
-        
-        it('no base', function() {
-            const src = `
-                /**
-                 * Test object
-                 */
-                class KalturaTest {
-                
-                    /**
-                     * Integer property
-                     * @property int
-                     * @type {number}
-                     */
-                    Int() {}
-                }
-                
-                /**
-                 * Test
-                 * @service test
-                 */
-                const controller = {
-                    /**
-                     * Do nothing
-                     * @param {KalturaTest} obj The object
-                     * @action doNothing
-                     */
-                    doNothing: (obj) => {
-                        return 1;
-                    }
-                };                
-                module.exports = controller;`;
-
-            try {
-                parser.controllers([writeSource(src)]);
+                Int() {}
             }
-            catch(e) {
-                assert.equal(e, 'Type [KalturaTest] should extend from KalturaObject');
-                return;
-            }
-            assert.fail('Validation should have fail');
-        });
-        
-        it('non-kaltura base', function() {
-            const src = `
-                class Base {}
-
-                /**
-                 * Test object
-                 */
-                class KalturaTest extends Base {
+            
+            /**
+             * Test
+             * @service test
+             */
+            const controller = {
+                KalturaTest: KalturaTest,
                 
-                    /**
-                     * Integer property
-                     * @property int
-                     * @type {number}
-                     */
-                    Int() {}
+                /**
+                 * Do nothing
+                 * @param {KalturaTest} obj The object
+                 * @action doNothing
+                 */
+                doNothing: (obj) => {
+                    return 1;
                 }
+            };                
+            module.exports = controller;`;
+
+        try {
+            parser.controllers([writeSource(src)]);
+        }
+        catch(e) {
+            assert.equal(e, 'Type [KalturaTest] base class [Base] is not known as KalturaObject');
+            return;
+        }
+        assert.fail('Validation should have fail');
+    });
+    
+    it('non-kaltura base base', function() {
+        this.timeout(10000);
+        const src = `
+            class Base {}
+
+            /**
+             * Test object
+             */
+            class KalturaBase extends Base {
+            
+                /**
+                 * Integer property
+                 * @property int
+                 * @type {number}
+                 */
+                Int() {}
+            }
+            
+            /**
+             * Test object
+             */
+            class KalturaTest extends KalturaBase {
+            
+                /**
+                 * Integer property
+                 * @property int
+                 * @type {number}
+                 */
+                Int() {}
+            }
+            
+            /**
+             * Test
+             * @service test
+             */
+            const controller = {
+                KalturaBase: KalturaBase,
+                KalturaTest: KalturaTest,
                 
                 /**
-                 * Test
-                 * @service test
+                 * Do nothing
+                 * @param {KalturaTest} obj The object
+                 * @action doNothing
                  */
-                const controller = {
-                    KalturaTest: KalturaTest,
-                    
-                    /**
-                     * Do nothing
-                     * @param {KalturaTest} obj The object
-                     * @action doNothing
-                     */
-                    doNothing: (obj) => {
-                        return 1;
-                    }
-                };                
-                module.exports = controller;`;
-
-            try {
-                parser.controllers([writeSource(src)]);
-            }
-            catch(e) {
-                assert.equal(e, 'Type [KalturaTest] base class [Base] is not known as KalturaObject');
-                return;
-            }
-            assert.fail('Validation should have fail');
-        });
-        
-        it('non-kaltura base base', function() {
-            const src = `
-                class Base {}
-
-                /**
-                 * Test object
-                 */
-                class KalturaBase extends Base {
-                
-                    /**
-                     * Integer property
-                     * @property int
-                     * @type {number}
-                     */
-                    Int() {}
+                doNothing: (obj) => {
+                    return 1;
                 }
-                
+            };                
+            module.exports = controller;`;
+
+        try {
+            parser.controllers([writeSource(src)]);
+        }
+        catch(e) {
+            assert.equal(e, 'Type [KalturaBase] base class [Base] is not known as KalturaObject');
+            return;
+        }
+        assert.fail('Validation should have fail');
+    });
+    
+    it('not exported', function() {
+        this.timeout(10000);
+        const src = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
+            /**
+             * Test object
+             */
+            class KalturaTest extends Nhoenix.KalturaObject {                
                 /**
-                 * Test object
+                 * Test property
+                 * @property test
+                 * @type {number}
                  */
-                class KalturaTest extends KalturaBase {
-                
-                    /**
-                     * Integer property
-                     * @property int
-                     * @type {number}
-                     */
-                    Int() {}
+                Test() {}
+            }
+            
+            /**
+             * Test
+             * @service test
+             */
+            const controller = {
+                /**
+                 * Do nothing
+                 * @param {KalturaTest} obj The object
+                 * @action doNothing
+                 */
+                doNothing: (obj) => {
+                    return 1;
                 }
+            };                
+            module.exports = controller;`;
+
+        try {
+            parser.controllers([writeSource(src)]);
+        }
+        catch(e) {
+            assert.equal(e, 'Type [KalturaTest] must be exported in its module');
+            return;
+        }
+        assert.fail('Validation should have fail');
+    });
+    
+    it('invalid name', function() {
+        this.timeout(10000);
+        const src = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
+            /**
+             * Test object
+             */
+            class kalturaTest extends Nhoenix.KalturaObject {                
+                /**
+                 * Test property
+                 * @property test
+                 * @type {number}
+                 */
+                Test() {}
+            }
+            
+            /**
+             * Test
+             * @service test
+             */
+            const controller = {
+                kalturaTest: kalturaTest,
                 
                 /**
-                 * Test
-                 * @service test
+                 * Do nothing
+                 * @param {kalturaTest} obj The object
+                 * @action doNothing
                  */
-                const controller = {
-                    KalturaBase: KalturaBase,
-                    KalturaTest: KalturaTest,
-                    
-                    /**
-                     * Do nothing
-                     * @param {KalturaTest} obj The object
-                     * @action doNothing
-                     */
-                    doNothing: (obj) => {
-                        return 1;
-                    }
-                };                
-                module.exports = controller;`;
-
-            try {
-                parser.controllers([writeSource(src)]);
-            }
-            catch(e) {
-                assert.equal(e, 'Type [KalturaBase] base class [Base] is not known as KalturaObject');
-                return;
-            }
-            assert.fail('Validation should have fail');
-        });
-        
-        it('not exported', function() {
-            const src = `
-                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
-
-                /**
-                 * Test object
-                 */
-                class KalturaTest extends Nhoenix.KalturaObject {                
-                    /**
-                     * Test property
-                     * @property test
-                     * @type {number}
-                     */
-                    Test() {}
+                doNothing: (obj) => {
+                    return 1;
                 }
-                
-                /**
-                 * Test
-                 * @service test
-                 */
-                const controller = {
-                    /**
-                     * Do nothing
-                     * @param {KalturaTest} obj The object
-                     * @action doNothing
-                     */
-                    doNothing: (obj) => {
-                        return 1;
-                    }
-                };                
-                module.exports = controller;`;
+            };                
+            module.exports = controller;`;
 
-            try {
-                parser.controllers([writeSource(src)]);
+        try {
+            parser.controllers([writeSource(src)]);
+        }
+        catch(e) {
+            assert.equal(e, 'Action [test.doNothing] argument [0] invalid type [kalturaTest]');
+            return;
+        }
+        assert.fail('Validation should have fail');
+    });
+    
+    it('invalid description', function() {
+        this.timeout(10000);
+        const src = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
+            /**
+             * test object
+             */
+            class KalturaTest1 extends Nhoenix.KalturaObject {                
+                /**
+                 * Test property
+                 * @property test
+                 * @type {number}
+                 */
+                Test() {}
             }
-            catch(e) {
-                assert.equal(e, 'Type [KalturaTest] must be exported in its module');
-                return;
-            }
-            assert.fail('Validation should have fail');
-        });
-        
-        it('invalid name', function() {
-            const src = `
-                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+            
+            /**
+             * Test
+             * @service test
+             */
+            const controller = {
+                KalturaTest1: KalturaTest1,
 
                 /**
-                 * Test object
+                 * Do nothing
+                 * @param {KalturaTest1} obj The object
+                 * @action doNothing
                  */
-                class kalturaTest extends Nhoenix.KalturaObject {                
-                    /**
-                     * Test property
-                     * @property test
-                     * @type {number}
-                     */
-                    Test() {}
+                doNothing: (obj) => {
+                    return 1;
                 }
-                
-                /**
-                 * Test
-                 * @service test
-                 */
-                const controller = {
-                    kalturaTest: kalturaTest,
-                    
-                    /**
-                     * Do nothing
-                     * @param {kalturaTest} obj The object
-                     * @action doNothing
-                     */
-                    doNothing: (obj) => {
-                        return 1;
-                    }
-                };                
-                module.exports = controller;`;
+            };                
+            module.exports = controller;`;
 
-            try {
-                parser.controllers([writeSource(src)]);
-            }
-            catch(e) {
-                assert.equal(e, 'Action [test.doNothing] argument [0] invalid type [kalturaTest]');
-                return;
-            }
-            assert.fail('Validation should have fail');
-        });
-        
-        it('invalid description', function() {
-            const src = `
-                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
-
-                /**
-                 * test object
-                 */
-                class KalturaTest1 extends Nhoenix.KalturaObject {                
-                    /**
-                     * Test property
-                     * @property test
-                     * @type {number}
-                     */
-                    Test() {}
-                }
-                
-                /**
-                 * Test
-                 * @service test
-                 */
-                const controller = {
-                    KalturaTest1: KalturaTest1,
-
-                    /**
-                     * Do nothing
-                     * @param {KalturaTest1} obj The object
-                     * @action doNothing
-                     */
-                    doNothing: (obj) => {
-                        return 1;
-                    }
-                };                
-                module.exports = controller;`;
-
-            try {
-                parser.controllers([writeSource(src)]);
-            }
-            catch(e) {
-                assert.equal(e, 'Type [KalturaTest1] description [test object] is invalid');
-                return;
-            }
-            assert.fail('Validation should have fail');
-        });
+        try {
+            parser.controllers([writeSource(src)]);
+        }
+        catch(e) {
+            assert.equal(e, 'Type [KalturaTest1] description [test object] is invalid');
+            return;
+        }
+        assert.fail('Validation should have fail');
     });
 });
