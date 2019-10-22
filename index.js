@@ -7,6 +7,41 @@ const bodyParser = require('body-parser');
 const parser = require('./lib/parser.js');
 
 const app = express();
+class KalturaEnum {
+    exists(value) {
+        return Object.keys(this).find(key => this[key] === value) !== undefined;
+    }
+    toValue(name) {
+        return this[name];
+    }
+    toName(value) {
+        return Object.keys(this).find(key => this[key] === value);
+    }
+}
+
+class KalturaNumericEnum extends KalturaEnum {
+    static new(values) {
+        Object.values(values).forEach(value => {
+            if(typeof value !== 'number') {
+                throw `Enum value [${value}] must be numeric`;
+            }
+        });
+        values.__proto__ = KalturaNumericEnum.prototype;
+        return values;
+    }
+}
+
+class KalturaStringEnum extends KalturaEnum {
+    static new(values) {
+        Object.values(values).forEach(value => {
+            if(typeof value !== 'string') {
+                throw `Enum value [${value}] must be string`;
+            }
+        });
+        values.__proto__ = KalturaStringEnum.prototype;
+        return values;
+    }
+}
 
 class KalturaObject {
     static implementProperties(clazz) {
@@ -84,6 +119,7 @@ var KalturaExceptionTypes = {
     INVALID_AGRUMENT_VALUE: new KalturaExceptionType('ARGUMENT_MAX_VALUE_CROSSED', 'Argument [{argument}] value must be of type [{value}]'),
     TYPE_NOT_SUPPORTED: new KalturaExceptionType('TYPE_NOT_SUPPORTED', 'Type [{value}] is not supported for argument [{argument}]'),
     ABSTRACT_PARAMETER: new KalturaExceptionType('ABSTRACT_PARAMETER', 'Abstract parameter type [{type}]'),
+    ARGUMENT_STRING_SHOULD_BE_ENUM: new KalturaExceptionType('ARGUMENT_STRING_SHOULD_BE_ENUM', 'Argument [{argument}] values must be of type [{enum}]'),
 };
 
 function parseValue(arg, value) {
@@ -132,34 +168,43 @@ function parseValue(arg, value) {
         
         default:
             var type = arg.objectType;
-            if(value.objectType && value.objectType != type.name) {
-                if(!type.children[value.objectType]) {
-                    throw new KalturaAPIException(KalturaExceptionTypes.TYPE_NOT_SUPPORTED, {argument: arg.name, value: value.objectType});
+            if(type.type === 'object') {
+                if(value.objectType && value.objectType != type.name) {
+                    if(!type.children[value.objectType]) {
+                        throw new KalturaAPIException(KalturaExceptionTypes.TYPE_NOT_SUPPORTED, {argument: arg.name, value: value.objectType});
+                    }
+                    type = type.children[value.objectType];
                 }
-                type = type.children[value.objectType];
-            }
-            if(type.abstract) {
-                throw new KalturaAPIException(KalturaExceptionTypes.ABSTRACT_PARAMETER, {type: type.name});                
-            }
-            
-            var obj = new type.class();
-            type.properties.forEach(property => {
-                if(value[property.name] !== undefined) {
-                    obj[property.name] = parseValue(property, value[property.name]);
+                if(type.abstract) {
+                    throw new KalturaAPIException(KalturaExceptionTypes.ABSTRACT_PARAMETER, {type: type.name});                
                 }
-            });
-            
-            var baseType = type.baseType;
-            while(baseType) {
-                baseType.properties.forEach(property => {
+                
+                var obj = new type.class();
+                type.properties.forEach(property => {
                     if(value[property.name] !== undefined) {
                         obj[property.name] = parseValue(property, value[property.name]);
                     }
                 });
-                baseType = baseType.baseType;
-            }
+                
+                var baseType = type.baseType;
+                while(baseType) {
+                    baseType.properties.forEach(property => {
+                        if(value[property.name] !== undefined) {
+                            obj[property.name] = parseValue(property, value[property.name]);
+                        }
+                    });
+                    baseType = baseType.baseType;
+                }
             
-            return obj;
+                return obj;
+            }
+            else if(type.type === 'enum') {
+                if(!type.enum.exists(value)) {
+                    throw new KalturaAPIException(KalturaExceptionTypes.ARGUMENT_STRING_SHOULD_BE_ENUM, {argument: arg.name, enum: type.name});
+                }
+                return value;
+            }
+            throw 'unknown type'; // TODO
     }
 }
 
@@ -240,6 +285,8 @@ const Nhoenix = {
 };
 
 module.exports = {
+    KalturaNumericEnum: KalturaNumericEnum.new,
+    KalturaStringEnum: KalturaStringEnum.new,
     KalturaObject: KalturaObject,
     KalturaAPIException: KalturaAPIException,
     KalturaExceptionType: KalturaExceptionType,

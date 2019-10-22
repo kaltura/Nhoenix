@@ -1567,7 +1567,288 @@ describe('requests', function() {
             var ret = Nhoenix.test('test', 'doNothing', {});
             assert.strictEqual(ret, 'default value');
         });
-
-        // TODO enum
     });
+    
+    describe('enum', function() {
+        
+        it('string', function() {
+            this.timeout(10000);
+            const src = `
+                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+                
+                /**
+                 * Test enum
+                 * @kind enum
+                 */
+                const KalturaTest = Nhoenix.KalturaStringEnum({
+                    VAL1: 'abc',
+                    VAL2: 'def',
+                });
+                
+                /**
+                 * Test
+                 * @service test
+                 */
+                const controller = {
+                    KalturaTest: KalturaTest,
+
+                    /**
+                     * Do nothing
+                     * @param {KalturaTest} val The enum
+                     * @action doNothing
+                     * @returns {string}
+                     */
+                    doNothing: (val) => {
+                        return val;
+                    }
+                };                
+                module.exports = controller;`;
+
+            Nhoenix.use([writeSource(src)]);            
+            var ret = Nhoenix.test('test', 'doNothing', {val: 'abc'});
+            assert.strictEqual(ret, 'abc');
+        });
+        
+        it('property', function() {
+            this.timeout(10000);
+            const src = `
+                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+                
+                /**
+                 * Test enum
+                 * @kind enum
+                 */
+                const KalturaTestType = Nhoenix.KalturaStringEnum({
+                    VAL1: 'abc',
+                    VAL2: 'def',
+                });
+                
+                /**
+                 * Test object
+                 */
+                class KalturaTest extends Nhoenix.KalturaObject {                
+                    /**
+                     * Test property
+                     * @property test
+                     * @type {KalturaTestType}
+                     */
+                    Test() {}
+                }
+                  
+                /**
+                 * Test
+                 * @service test
+                 */
+                const controller = {
+                    KalturaTestType: KalturaTestType,
+                    KalturaTest: KalturaTest,
+
+                    /**
+                     * Do nothing
+                     * @param {KalturaTest} obj The object
+                     * @action doNothing
+                     * @returns {string}
+                     */
+                    doNothing: (obj) => {
+                        return obj.Test();
+                    }
+                };                
+                module.exports = controller;`;
+
+            Nhoenix.use([writeSource(src)]);            
+            var ret = Nhoenix.test('test', 'doNothing', {
+                obj: {
+                    test: 'abc'
+                }
+            });
+            assert.strictEqual(ret, 'abc');
+        });
+
+        it('invalid string', function() {
+            this.timeout(10000);
+            const src = `
+                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+                
+                /**
+                 * Test enum
+                 * @kind enum
+                 */
+                const KalturaTest = Nhoenix.KalturaStringEnum({
+                    VAL1: 'abc',
+                    VAL2: 'def',
+                });
+                
+                /**
+                 * Test
+                 * @service test
+                 */
+                const controller = {
+                    KalturaTest: KalturaTest,
+
+                    /**
+                     * Do nothing
+                     * @param {KalturaTest} val The enum
+                     * @action doNothing
+                     * @returns {string}
+                     */
+                    doNothing: (val) => {
+                        return val;
+                    }
+                };                
+                module.exports = controller;`;
+
+            Nhoenix.use([writeSource(src)]);            
+                        
+            try {
+                Nhoenix.test('test', 'doNothing', {val: 'abcd'});
+                assert.fail('Validation should have fail');
+            }
+            catch(e) {
+                assert.equal(e.message, 'Argument [val] values must be of type [KalturaTest]');
+            }
+        });
+        
+        it('invalid property', function() {
+            this.timeout(10000);
+            const src = `
+                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+                
+                /**
+                 * Test enum
+                 * @kind enum
+                 */
+                const KalturaTestType = Nhoenix.KalturaStringEnum({
+                    VAL1: 'abc',
+                    VAL2: 'def',
+                });
+                
+                /**
+                 * Test object
+                 */
+                class KalturaTest extends Nhoenix.KalturaObject {                
+                    /**
+                     * Test property
+                     * @property test
+                     * @type {KalturaTestType}
+                     */
+                    Test() {}
+                }
+                  
+                /**
+                 * Test
+                 * @service test
+                 */
+                const controller = {
+                    KalturaTestType: KalturaTestType,
+                    KalturaTest: KalturaTest,
+
+                    /**
+                     * Do nothing
+                     * @param {KalturaTest} obj The object
+                     * @action doNothing
+                     * @returns {string}
+                     */
+                    doNothing: (obj) => {
+                        return obj.Test();
+                    }
+                };                
+                module.exports = controller;`;
+
+            Nhoenix.use([writeSource(src)]);
+                    
+            try {
+                Nhoenix.test('test', 'doNothing', {
+                    obj: {
+                        test: 'abcd'
+                    }
+                });
+                assert.fail('Validation should have fail');
+            }
+            catch(e) {
+                assert.equal(e.message, 'Argument [test] values must be of type [KalturaTestType]');
+            }
+        });
+        
+        it('numeric', function() {
+            this.timeout(10000);
+            const src = `
+                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+                
+                /**
+                 * Test enum
+                 * @kind enum
+                 */
+                const KalturaTest = Nhoenix.KalturaNumericEnum({
+                    VAL1: 123,
+                    VAL2: 456,
+                });
+                
+                /**
+                 * Test
+                 * @service test
+                 */
+                const controller = {
+                    KalturaTest: KalturaTest,
+
+                    /**
+                     * Do nothing
+                     * @param {KalturaTest} val The enum
+                     * @action doNothing
+                     * @returns {string}
+                     */
+                    doNothing: (val) => {
+                        return val;
+                    }
+                };                
+                module.exports = controller;`;
+
+            Nhoenix.use([writeSource(src)]);            
+            var ret = Nhoenix.test('test', 'doNothing', {val: 123});
+            assert.strictEqual(ret, 123);
+        });
+        
+        it('invalid numeric', function() {
+            this.timeout(10000);
+            const src = `
+                const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+                
+                /**
+                 * Test enum
+                 * @kind enum
+                 */
+                const KalturaTest = Nhoenix.KalturaNumericEnum({
+                    VAL1: 123,
+                    VAL2: 456,
+                });
+                
+                /**
+                 * Test
+                 * @service test
+                 */
+                const controller = {
+                    KalturaTest: KalturaTest,
+
+                    /**
+                     * Do nothing
+                     * @param {KalturaTest} val The enum
+                     * @action doNothing
+                     * @returns {string}
+                     */
+                    doNothing: (val) => {
+                        return val;
+                    }
+                };                
+                module.exports = controller;`;
+
+            Nhoenix.use([writeSource(src)]);            
+                        
+            try {
+                Nhoenix.test('test', 'doNothing', {val: 1234});
+                assert.fail('Validation should have fail');
+            }
+            catch(e) {
+                assert.equal(e.message, 'Argument [val] values must be of type [KalturaTest]');
+            }
+        });
+    });        
 });
