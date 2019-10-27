@@ -25,24 +25,23 @@ describe('enums', function() {
                 VAL1: '1',
                 VAL2: '2',
             });
-            
+
             /**
              * Test
              * @service test
              */
-            const controller = {
-                KalturaTest: KalturaTest,
-
+            class Controller extends Nhoenix.Controller {
                 /**
                  * Do nothing
-                 * @param {KalturaTest} val The enum
                  * @action doNothing
+                 * @param {KalturaTest} val The enum
                  */
-                doNothing: (val) => {
-                    return 1;
+                doNothing (val) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            Controller.KalturaTest = KalturaTest;
+
+            module.exports = Controller;`;
 
         parser.controllers([writeSource(src)]);
     });
@@ -74,17 +73,18 @@ describe('enums', function() {
              * Test
              * @service test
              */
-            const controller = {
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {KalturaTest} val The enum
                  * @action doNothing
+                 * @param {KalturaTest} val The enum
                  */
-                doNothing: (val) => {
-                    return 1;
+                doNothing (val) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            Controller.KalturaTest = KalturaTest;
+
+            module.exports = Controller;`;
 
         parser.controllers([writeSource(controllerSource)]);
     });
@@ -129,17 +129,18 @@ describe('enums', function() {
              * Test
              * @service test
              */
-            const controller = {
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {KalturaTest1} val The enum
                  * @action doNothing
+                 * @param {KalturaTest1} val The enum
                  */
-                doNothing: (val) => {
-                    return 1;
+                doNothing (val) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            Controller.KalturaTest1 = KalturaTest1;
+
+            module.exports = Controller;`;
 
         parser.controllers([writeSource(controllerSource)]);
     });
@@ -182,17 +183,17 @@ describe('enums', function() {
              * Test
              * @service test
              */
-            const controller = {
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {KalturaTest2} obj The object
                  * @action doNothing
+                 * @param {KalturaTest2} val The enum
                  */
-                doNothing: (obj) => {
-                    return 1;
+                doNothing (val) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+
+            module.exports = Controller;`;
 
         parser.controllers([writeSource(controllerSource)]);
     });
@@ -213,19 +214,18 @@ describe('enums', function() {
              * Test
              * @service test
              */
-            const controller = {
-                KalturaTest: KalturaTest,
-
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {KalturaTest} val The enum
                  * @action doNothing
+                 * @param {KalturaTest} val The enum
                  */
-                doNothing: (val) => {
-                    return 1;
+                doNothing (val) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            Controller.KalturaTest = KalturaTest;
+
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
@@ -255,17 +255,17 @@ describe('enums', function() {
              * Test
              * @service test
              */
-            const controller = {
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {KalturaTest} val The enum
                  * @action doNothing
+                 * @param {KalturaTest} val The enum
                  */
-                doNothing: (val) => {
-                    return 1;
+                doNothing (val) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
@@ -295,19 +295,18 @@ describe('enums', function() {
              * Test
              * @service test
              */
-            const controller = {
-                kalturaTest: kalturaTest,
-                
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {kalturaTest} val The enum
                  * @action doNothing
+                 * @param {kalturaTest} val The enum
                  */
-                doNothing: (val) => {
-                    return 1;
+                doNothing (val) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            Controller.kalturaTest = kalturaTest;
+
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
@@ -328,7 +327,7 @@ describe('enums', function() {
              * Test enum
              * @kind enum
              */
-            const kalturaTest = Nhoenix.KalturaStringEnum({
+            const KalturaTest = Nhoenix.KalturaStringEnum({
                 val1: '1',
                 VAL2: '2',
             });
@@ -337,25 +336,24 @@ describe('enums', function() {
              * Test
              * @service test
              */
-            const controller = {
-                kalturaTest: kalturaTest,
-                
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {kalturaTest} val The enum
                  * @action doNothing
+                 * @param {KalturaTest} val The enum
                  */
-                doNothing: (val) => {
-                    return 1;
+                doNothing (val) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            Controller.KalturaTest = KalturaTest;
+
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
         }
         catch(e) {
-            assert.equal(e, 'Action [test.doNothing] argument [0] invalid type [kalturaTest]');
+            assert.equal(e, 'Enum [KalturaTest] key [val1] is invalid');
             return;
         }
         assert.fail('Validation should have fail');
@@ -379,19 +377,18 @@ describe('enums', function() {
              * Test
              * @service test
              */
-            const controller = {
-                KalturaTest: KalturaTest,
-
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {kalturaTest} val The enum
                  * @action doNothing
+                 * @param {KalturaTest} val The enum
                  */
-                doNothing: (val) => {
-                    return 1;
+                doNothing (val) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            Controller.KalturaTest = KalturaTest;
+
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
@@ -421,19 +418,17 @@ describe('enums', function() {
              * Test
              * @service test
              */
-            const controller = {
-                KalturaTest: KalturaTest,
-
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {kalturaTest} val The enum
                  * @action doNothing
+                 * @param {KalturaTest} val The enum
                  */
-                doNothing: (val) => {
-                    return 1;
+                doNothing (val) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
@@ -463,19 +458,17 @@ describe('enums', function() {
              * Test
              * @service test
              */
-            const controller = {
-                KalturaTest: KalturaTest,
-
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {kalturaTest} val The enum
                  * @action doNothing
+                 * @param {KalturaTest} val The enum
                  */
-                doNothing: (val) => {
-                    return 1;
+                doNothing (val) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);

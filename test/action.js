@@ -15,20 +15,22 @@ describe('action', function() {
     it('valid', function() {
         this.timeout(10000);
         const src = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
             /**
              * Test
              * @service test
              */
-            const controller = {
+            class Controller extends Nhoenix.Controller {
                 /**
                  * Do nothing
                  * @action doNothing
                  * @returns {number}
                  */
-                doNothing: () => {
+                doNothing () {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            module.exports = Controller;`;
 
         parser.controllers([writeSource(src)]);
     });
@@ -36,18 +38,20 @@ describe('action', function() {
     it('no action', function() {
         this.timeout(10000);
         const src = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
             /**
              * Test
              * @service test
              */
-            const controller = {
+            class Controller extends Nhoenix.Controller {
                 /**
                  * Do nothing
                  */
-                doNothing: () => {
+                doNothing () {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
@@ -62,18 +66,20 @@ describe('action', function() {
     it('no description', function() {
         this.timeout(10000);
         const src = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
             /**
              * Test
              * @service test
              */
-            const controller = {
+            class Controller extends Nhoenix.Controller {
                 /**
                  * @action doNothing
                  */
-                doNothing: () => {
+                doNothing () {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
@@ -88,19 +94,22 @@ describe('action', function() {
     it('empty description', function() {
         this.timeout(10000);
         const src = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
             /**
              * Test
              * @service test
              */
-            const controller = {
+            class Controller extends Nhoenix.Controller {
                 /**
                  * 
                  * @action doNothing
+                 * @returns {number}
                  */
-                doNothing: () => {
+                doNothing () {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
@@ -115,19 +124,22 @@ describe('action', function() {
     it('invalid description', function() {
         this.timeout(10000);
         const src = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
             /**
              * Test
              * @service test
              */
-            const controller = {
+            class Controller extends Nhoenix.Controller {
                 /**
                  * no capital letter
                  * @action doNothing
+                 * @returns {number}
                  */
-                doNothing: () => {
+                doNothing () {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
@@ -142,19 +154,21 @@ describe('action', function() {
     it('invalid name capital', function() {
         this.timeout(10000);
         const src = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
             /**
              * Test
              * @service test
              */
-            const controller = {
+            class Controller extends Nhoenix.Controller {
                 /**
                  * Do nothing
                  * @action DoNothing
                  */
-                doNothing: () => {
+                doNothing () {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
@@ -169,19 +183,21 @@ describe('action', function() {
     it('invalid name number', function() {
         this.timeout(10000);
         const src = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
             /**
              * Test
              * @service test
              */
-            const controller = {
+            class Controller extends Nhoenix.Controller {
                 /**
                  * Do nothing
                  * @action 1doNothing
                  */
-                doNothing: () => {
+                doNothing () {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
@@ -196,19 +212,21 @@ describe('action', function() {
     it('invalid name invalid chars', function() {
         this.timeout(10000);
         const src = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
             /**
              * Test
              * @service test
              */
-            const controller = {
+            class Controller extends Nhoenix.Controller {
                 /**
                  * Do nothing
                  * @action doNothing_
                  */
-                doNothing: () => {
+                doNothing () {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
@@ -219,50 +237,26 @@ describe('action', function() {
         }
         assert.fail('Validation should have fail');
     });
-    
-    it('not a function', function() {
-        this.timeout(10000);
-        const src = `
-            /**
-             * Test
-             * @service test
-             */
-            const controller = {
-                /**
-                 * Do nothing
-                 * @action doNothing
-                 */
-                doNothing: 1
-            };                
-            module.exports = controller;`;
-
-        try {
-            parser.controllers([writeSource(src)]);
-        }
-        catch(e) {
-            assert.equal(e, 'Action [test.doNothing] is not a function');
-            return;
-        }
-        assert.fail('Validation should have fail');
-    });
-    
+        
     it('invalid return type', function() {
         this.timeout(10000);
         const src = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
             /**
              * Test
              * @service test
              */
-            const controller = {
+            class Controller extends Nhoenix.Controller {
                 /**
                  * Do nothing
                  * @action doNothing
                  * @returns {invalid}
                  */
-                doNothing: () => {
+                doNothing () {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
@@ -295,18 +289,19 @@ describe('action', function() {
              * Test
              * @service test
              */
-            const controller = {
-                KalturaTest: KalturaTest,
-
+            class Controller extends Nhoenix.Controller {
                 /**
                  * Do nothing
                  * @action doNothing
                  * @returns {KalturaTest}
                  */
-                doNothing: () => {
+                doNothing () {
                 }
-            };                
-            module.exports = controller;`;
+            }
+
+            Controller.KalturaTest = KalturaTest;
+
+            module.exports = Controller;`;
 
         parser.controllers([writeSource(src)]);
     });
@@ -314,22 +309,25 @@ describe('action', function() {
     it('valid arg', function() {
         this.timeout(10000);
         const src = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
             /**
              * Test
              * @service test
              */
-            const controller = {
+            class Controller extends Nhoenix.Controller {
                 /**
                  * Do nothing
-                 * @param {string} par Object argument
                  * @action doNothing
+                 * @param {string} par Object argument
                  */
-                doNothing: (par) => {
+                doNothing (par) {
                 }
-            };                
-            module.exports = controller;`;
+            }
 
-        parser.controllers([writeSource(src)]);
+            Controller.KalturaTest = KalturaTest;
+
+            module.exports = Controller;`;
     });
     
     it('object arg', function() {
@@ -353,18 +351,19 @@ describe('action', function() {
              * Test
              * @service test
              */
-            const controller = {
-                KalturaTest: KalturaTest,
-
+            class Controller extends Nhoenix.Controller {
                 /**
                  * Do nothing
-                 * @param {KalturaTest} par Object argument
                  * @action doNothing
+                 * @param {KalturaTest} par Object argument
                  */
-                doNothing: (par) => {
+                doNothing (par) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+
+            Controller.KalturaTest = KalturaTest;
+
+            module.exports = Controller;`;
 
         parser.controllers([writeSource(src)]);
     });
@@ -372,20 +371,22 @@ describe('action', function() {
     it('invalid arg', function() {
         this.timeout(10000);
         const src = `
+            const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
+
             /**
              * Test
              * @service test
              */
-            const controller = {
+            class Controller extends Nhoenix.Controller {
                 /**
                  * Do nothing
-                 * @param {KalturaTest} par Object argument
                  * @action doNothing
+                 * @param {KalturaTest} par Object argument
                  */
-                doNothing: (par) => {
+                doNothing (par) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
