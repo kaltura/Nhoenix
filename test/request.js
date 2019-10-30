@@ -19,15 +19,16 @@ describe('requests', function() {
              * Test
              * @service test
              */
-            const controller = {
+            class Controller {
                 /**
                  * Do nothing
                  * @action doNothing
                  */
-                doNothing: () => {
+                doNothing () {
                 }
-            };                
-            module.exports = controller;`;
+            }
+
+            module.exports = Controller;`;
 
         Nhoenix.use([writeSource(src)]);            
         var ret = Nhoenix.test('test', 'doNothing');
@@ -41,17 +42,18 @@ describe('requests', function() {
              * Test
              * @service test
              */
-            const controller = {
+            class Controller {
                 /**
                  * Do nothing
                  * @param {string} myArg The param
                  * @action doNothing
                  */
-                doNothing: (myArg) => {
+                doNothing (myArg) {
                     return myArg;
                 }
-            };                
-            module.exports = controller;`;
+            }
+
+            module.exports = Controller;`;
 
         Nhoenix.use([writeSource(src)]);
         
@@ -72,22 +74,23 @@ describe('requests', function() {
              * Test
              * @service test
              */
-            const controller = {
+            class Controller {
                 /**
                  * Do nothing
                  * @param {string} myArg The param
                  * @action doNothing
                  */
-                doNothing: (myArg) => {
+                doNothing (myArg) {
                     return myArg;
                 }
-            };                
-            module.exports = controller;`;
+            }
+
+            module.exports = Controller;`;
 
         Nhoenix.use([writeSource(src)]);
         
         try {
-            Nhoenix.test('test', 'doNothing', {myArg: null});
+            Nhoenix.test('test', 'doNothing', {});
         }
         catch(e) {
             assert.equal(e.message, 'Argument [myArg] cannot be empty');
@@ -95,28 +98,60 @@ describe('requests', function() {
         }
         assert.fail('Validation should have fail');
     });
+
+    it('optional', function() {
+        this.timeout(10000);
+        const src = `                 
+            /**
+             * Test
+             * @service test
+             */
+            class Controller {
+                /**
+                 * Do nothing
+                 * @param {string} myArg The param @optional true
+                 * @action doNothing
+                 * @returns {string}
+                 */
+                doNothing (myArg) {
+                    myArg = myArg || 'default value';
+                    return myArg;
+                }
+            }
+
+            module.exports = Controller;`;
+
+        Nhoenix.use([writeSource(src)]);
+
+        var ret = Nhoenix.test('test', 'doNothing', {myArg: 'set value'});
+        assert.strictEqual(ret, 'set value');
+          
+        var ret = Nhoenix.test('test', 'doNothing', {});
+        assert.strictEqual(ret, 'default value');
+    });
     
     describe('string', function() {
 
         it('string', function() {
             this.timeout(10000);
-            const src = `
+            const src = `            
                 /**
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {string} myArg The param
                      * @action doNothing
                      * @returns {string}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: 'my string'});
@@ -130,18 +165,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {string} myArg The param
                      * @action doNothing
                      * @returns {string}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: 123});
@@ -155,18 +191,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {string} myArg The param
                      * @action doNothing
                      * @returns {string}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: 1.5});
@@ -180,18 +217,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {string} myArg The param
                      * @action doNothing
                      * @returns {string}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: true});
@@ -208,18 +246,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {boolean} myArg The param
                      * @action doNothing
                      * @returns {boolean}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: true});
@@ -233,18 +272,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {boolean} myArg The param
                      * @action doNothing
                      * @returns {boolean}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: false});
@@ -258,18 +298,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {boolean} myArg The param
                      * @action doNothing
                      * @returns {boolean}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: 1});
@@ -283,18 +324,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {boolean} myArg The param
                      * @action doNothing
                      * @returns {boolean}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: 0});
@@ -308,18 +350,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {boolean} myArg The param
                      * @action doNothing
                      * @returns {boolean}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: 'true'});
@@ -333,18 +376,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {boolean} myArg The param
                      * @action doNothing
                      * @returns {boolean}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: 'false'});
@@ -358,18 +402,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {boolean} myArg The param
                      * @action doNothing
                      * @returns {boolean}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: '1'});
@@ -383,18 +428,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {boolean} myArg The param
                      * @action doNothing
                      * @returns {boolean}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: '0'});
@@ -408,18 +454,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {boolean} myArg The param
                      * @action doNothing
                      * @returns {boolean}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);
             
@@ -440,18 +487,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {boolean} myArg The param
                      * @action doNothing
                      * @returns {boolean}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);
             
@@ -472,18 +520,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {boolean} myArg The param
                      * @action doNothing
                      * @returns {boolean}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);
             
@@ -507,18 +556,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {number} myArg The param
                      * @action doNothing
                      * @returns {number}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: 35});
@@ -532,18 +582,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {number} myArg The param
                      * @action doNothing
                      * @returns {number}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: '45'});
@@ -557,18 +608,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {number} myArg The param
                      * @action doNothing
                      * @returns {number}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);
             
@@ -592,18 +644,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {time} myArg The param
                      * @action doNothing
                      * @returns {time}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: 35});
@@ -617,18 +670,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {time} myArg The param
                      * @action doNothing
                      * @returns {time}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: '45'});
@@ -642,18 +696,19 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {time} myArg The param
                      * @action doNothing
                      * @returns {time}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);
             
@@ -687,25 +742,25 @@ describe('requests', function() {
                      */
                     Test() {}
                 }
-                  
+                
                 /**
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaTest: KalturaTest,
-
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} myArg The param
                      * @action doNothing
                      * @returns {KalturaTest}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg.Test();
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaTest = KalturaTest;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: {
@@ -731,25 +786,25 @@ describe('requests', function() {
                      */
                     Test() {}
                 }
-                  
+                
                 /**
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaTest: KalturaTest,
-                    
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} myArg The param
                      * @action doNothing
                      * @returns {KalturaTest}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg.Test();
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaTest = KalturaTest;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: {
@@ -786,29 +841,29 @@ describe('requests', function() {
                      */
                     Test2() {}
                 }
-                  
+
                 /**
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaTest: KalturaTest,
-                    KalturaExtended: KalturaExtended,
-                    
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} myArg The param
                      * @action doNothing
                      * @returns {KalturaTest}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         if(myArg instanceof KalturaExtended) {
                             return myArg.Test2();
                         }
                         return myArg.Test1();
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaTest = KalturaTest;
+                Controller.KalturaExtended = KalturaExtended;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: {
@@ -864,18 +919,14 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaTest: KalturaTest,
-                    KalturaExtended: KalturaExtended,
-                    KalturaExtendedAgain: KalturaExtendedAgain,
-                    
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} myArg The param
                      * @action doNothing
                      * @returns {KalturaTest}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         if(myArg instanceof KalturaExtendedAgain) {
                             return myArg.Test3();
                         }
@@ -884,8 +935,12 @@ describe('requests', function() {
                         }
                         return myArg.Test1();
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaTest = KalturaTest;
+                Controller.KalturaExtended = KalturaExtended;
+                Controller.KalturaExtendedAgain = KalturaExtendedAgain;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);
             var ret = Nhoenix.test('test', 'doNothing', {myArg: {
@@ -938,21 +993,21 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaNested: KalturaNested,
-                    KalturaTest: KalturaTest,
-                    
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} myArg The param
                      * @action doNothing
                      * @returns {KalturaTest}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg.Nested().Test();
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaNested = KalturaNested;
+                Controller.KalturaTest = KalturaTest;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: {
@@ -1008,25 +1063,25 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaNested: KalturaNested,
-                    KalturaExtendedNested: KalturaExtendedNested,
-                    KalturaTest: KalturaTest,
-                    
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} myArg The param
                      * @action doNothing
                      * @returns {KalturaTest}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         if(myArg.Nested() instanceof KalturaExtendedNested) {
                             return myArg.Nested().Test2();
                         }
                         return myArg.Nested().Test1();
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaNested = KalturaNested;
+                Controller.KalturaExtendedNested = KalturaExtendedNested;
+                Controller.KalturaTest = KalturaTest;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: {
@@ -1073,24 +1128,24 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaTest: KalturaTest,
-                    KalturaExtended: KalturaExtended,
-                    
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} myArg The param
                      * @action doNothing
                      * @returns {KalturaTest}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         if(myArg instanceof KalturaExtended) {
                             return myArg.Test2();
                         }
                         return myArg.Test1();
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaTest = KalturaTest;
+                Controller.KalturaExtended = KalturaExtended;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: {
@@ -1135,24 +1190,24 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaTest: KalturaTest,
-                    KalturaExtended: KalturaExtended,
-                    
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} myArg The param
                      * @action doNothing
                      * @returns {KalturaTest}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         if(myArg instanceof KalturaExtended) {
                             return myArg.Test2();
                         }
                         return myArg.Test1();
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaTest = KalturaTest;
+                Controller.KalturaExtended = KalturaExtended;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             
@@ -1212,22 +1267,22 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaNested: KalturaNested,
-                    KalturaExtendedNested: KalturaExtendedNested,
-                    KalturaTest: KalturaTest,
-                    
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} myArg The param
                      * @action doNothing
                      * @returns {KalturaTest}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg.Nested().Test1();
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaNested = KalturaNested;
+                Controller.KalturaExtendedNested = KalturaExtendedNested;
+                Controller.KalturaTest = KalturaTest;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: {
@@ -1285,22 +1340,22 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaNested: KalturaNested,
-                    KalturaExtendedNested: KalturaExtendedNested,
-                    KalturaTest: KalturaTest,
-                    
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} myArg The param
                      * @action doNothing
                      * @returns {KalturaTest}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg.Nested().Test1();
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaNested = KalturaNested;
+                Controller.KalturaExtendedNested = KalturaExtendedNested;
+                Controller.KalturaTest = KalturaTest;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             
@@ -1345,20 +1400,20 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaTest: KalturaTest,
-
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} myArg The param
                      * @action doNothing
                      * @returns {KalturaTest}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg.Test();
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaTest = KalturaTest;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: {}});
@@ -1398,20 +1453,20 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaTest: KalturaTest,
-
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} myArg The param
                      * @action doNothing
                      * @returns {string}
                      */
-                    doNothing: (myArg) => {
+                    doNothing (myArg) {
                         return myArg.Str() + ':' + myArg.Int();
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaTest = KalturaTest;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {myArg: {
@@ -1467,12 +1522,12 @@ describe('requests', function() {
 
         it('args restrictions', function() {
             this.timeout(10000);
-            const src = `
+            const src = `                  
                 /**
                  * Test
                  * @service test
                  */
-                const controller = {
+                class Controller {
                     /**
                      * Do nothing
                      * @param {number} int The param @minValue 3 @maxValue 5
@@ -1480,11 +1535,12 @@ describe('requests', function() {
                      * @action doNothing
                      * @returns {string}
                      */
-                    doNothing: (int, str) => {
+                    doNothing (int, str) {
                         return str + ':' + int;
                     }
-                };                
-                module.exports = controller;`;
+                }
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {
@@ -1537,36 +1593,6 @@ describe('requests', function() {
                 assert.equal(e.message, 'Argument [str] maximum length is [5]');
             }
         });
-
-        it('optional', function() {
-            this.timeout(10000);
-            const src = `
-                /**
-                 * Test
-                 * @service test
-                 */
-                const controller = {
-                    /**
-                     * Do nothing
-                     * @param {string} myArg The param @optional true
-                     * @action doNothing
-                     * @returns {string}
-                     */
-                    doNothing: (myArg) => {
-                        myArg = myArg || 'default value';
-                        return myArg;
-                    }
-                };                
-                module.exports = controller;`;
-
-            Nhoenix.use([writeSource(src)]);
-
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: 'set value'});
-            assert.strictEqual(ret, 'set value');
-              
-            var ret = Nhoenix.test('test', 'doNothing', {});
-            assert.strictEqual(ret, 'default value');
-        });
     });
     
     describe('enum', function() {
@@ -1584,25 +1610,25 @@ describe('requests', function() {
                     VAL1: 'abc',
                     VAL2: 'def',
                 });
-                
+                              
                 /**
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaTest: KalturaTest,
-
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} val The enum
                      * @action doNothing
                      * @returns {string}
                      */
-                    doNothing: (val) => {
+                    doNothing (val) {
                         return val;
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaTest = KalturaTest;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {val: 'abc'});
@@ -1634,26 +1660,26 @@ describe('requests', function() {
                      */
                     Test() {}
                 }
-                  
+                              
                 /**
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaTestType: KalturaTestType,
-                    KalturaTest: KalturaTest,
-
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} obj The object
                      * @action doNothing
                      * @returns {string}
                      */
-                    doNothing: (obj) => {
+                    doNothing (obj) {
                         return obj.Test();
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaTestType = KalturaTestType;
+                Controller.KalturaTest = KalturaTest;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {
@@ -1677,25 +1703,25 @@ describe('requests', function() {
                     VAL1: 'abc',
                     VAL2: 'def',
                 });
-                
+                              
                 /**
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaTest: KalturaTest,
-
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} val The enum
                      * @action doNothing
                      * @returns {string}
                      */
-                    doNothing: (val) => {
+                    doNothing (val) {
                         return val;
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaTest = KalturaTest;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
                         
@@ -1733,26 +1759,26 @@ describe('requests', function() {
                      */
                     Test() {}
                 }
-                  
+                              
                 /**
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaTestType: KalturaTestType,
-                    KalturaTest: KalturaTest,
-
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} obj The object
                      * @action doNothing
                      * @returns {string}
                      */
-                    doNothing: (obj) => {
+                    doNothing (obj) {
                         return obj.Test();
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaTestType = KalturaTestType;
+                Controller.KalturaTest = KalturaTest;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);
                     
@@ -1787,20 +1813,20 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaTest: KalturaTest,
-
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} val The enum
                      * @action doNothing
                      * @returns {string}
                      */
-                    doNothing: (val) => {
+                    doNothing (val) {
                         return val;
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaTest = KalturaTest;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
             var ret = Nhoenix.test('test', 'doNothing', {val: 123});
@@ -1825,20 +1851,20 @@ describe('requests', function() {
                  * Test
                  * @service test
                  */
-                const controller = {
-                    KalturaTest: KalturaTest,
-
+                class Controller {
                     /**
                      * Do nothing
                      * @param {KalturaTest} val The enum
                      * @action doNothing
                      * @returns {string}
                      */
-                    doNothing: (val) => {
+                    doNothing (val) {
                         return val;
                     }
-                };                
-                module.exports = controller;`;
+                }
+                Controller.KalturaTest = KalturaTest;
+
+                module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
                         

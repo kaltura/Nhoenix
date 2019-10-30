@@ -55,19 +55,18 @@ describe('properties', function() {
              * Test
              * @service test
              */
-            const controller = {
-                KalturaTest: KalturaTest,
-
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {KalturaTest} obj The object
                  * @action doNothing
+                 * @param {KalturaTest} obj The object
                  */
-                doNothing: (obj) => {
-                    return 1;
+                doNothing (obj) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            Controller.KalturaTest = KalturaTest;
+
+            module.exports = Controller;`;
 
         parser.controllers([writeSource(src)]);
     });
@@ -107,20 +106,19 @@ describe('properties', function() {
              * Test
              * @service test
              */
-            const controller = {
-                KalturaNested: KalturaNested,
-                KalturaTest: KalturaTest,
-
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {KalturaTest} obj The object
                  * @action doNothing
+                 * @param {KalturaTest} obj The object
                  */
-                doNothing: (obj) => {
-                    return 1;
+                doNothing (obj) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            Controller.KalturaNested = KalturaNested;
+            Controller.KalturaTest = KalturaTest;
+
+            module.exports = Controller;`;
 
         parser.controllers([writeSource(src)]);
     });
@@ -168,19 +166,18 @@ describe('properties', function() {
              * Test
              * @service test
              */
-            const controller = {
-                KalturaTest2: KalturaTest2,
-
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {KalturaTest2} obj The object
                  * @action doNothing
+                 * @param {KalturaTest2} obj The object
                  */
-                doNothing: (obj) => {
-                    return 1;
+                doNothing (obj) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            Controller.KalturaTest2 = KalturaTest2;
+
+            module.exports = Controller;`;
 
         parser.controllers([writeSource(controllerSource)]);
     });
@@ -207,19 +204,18 @@ describe('properties', function() {
              * Test
              * @service test
              */
-            const controller = {
-                KalturaTest: KalturaTest,
-
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {KalturaTest} obj The object
                  * @action doNothing
+                 * @param {KalturaTest} obj The object
                  */
-                doNothing: (obj) => {
-                    return 1;
+                doNothing (obj) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            Controller.KalturaTest = KalturaTest;
+
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
@@ -253,19 +249,18 @@ describe('properties', function() {
              * Test
              * @service test
              */
-            const controller = {
-                KalturaTest: KalturaTest,
-
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {KalturaTest} obj The object
                  * @action doNothing
+                 * @param {KalturaTest} obj The object
                  */
-                doNothing: (obj) => {
-                    return 1;
+                doNothing (obj) {
                 }
-            };
-            module.exports = controller;`;
+            }
+            Controller.KalturaTest = KalturaTest;
+
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
@@ -299,19 +294,18 @@ describe('properties', function() {
              * Test
              * @service test
              */
-            const controller = {
-                KalturaTest: KalturaTest,
-
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {KalturaTest} obj The object
                  * @action doNothing
+                 * @param {KalturaTest} obj The object
                  */
-                doNothing: (obj) => {
-                    return 1;
+                doNothing (obj) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            Controller.KalturaTest = KalturaTest;
+
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
@@ -344,19 +338,18 @@ describe('properties', function() {
              * Test
              * @service test
              */
-            const controller = {
-                KalturaTest: KalturaTest,
-
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {KalturaTest} obj The object
                  * @action doNothing
+                 * @param {KalturaTest} obj The object
                  */
-                doNothing: (obj) => {
-                    return 1;
+                doNothing (obj) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            Controller.KalturaTest = KalturaTest;
+
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
@@ -390,19 +383,18 @@ describe('properties', function() {
              * Test
              * @service test
              */
-            const controller = {
-                KalturaTest: KalturaTest,
-
+            class Controller {
                 /**
                  * Do nothing
-                 * @param {KalturaTest} obj The object
                  * @action doNothing
+                 * @param {KalturaTest} obj The object
                  */
-                doNothing: (obj) => {
-                    return 1;
+                doNothing (obj) {
                 }
-            };                
-            module.exports = controller;`;
+            }
+            Controller.KalturaTest = KalturaTest;
+
+            module.exports = Controller;`;
 
         try {
             parser.controllers([writeSource(src)]);
