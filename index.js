@@ -15,7 +15,7 @@ app.use((error, request, response, next) => {
         response.send({
             executionTime: (Date.now() - response.startTime),
             result: {
-                error: new types.KalturaAPIException(types.KalturaExceptionType.INVALID_JSON_FORMAT)
+                error: new types.KalturaAPIException(types.ExceptionType.INVALID_JSON_FORMAT)
             }
         });
     } else {
@@ -28,24 +28,24 @@ function parseValue(arg, value) {
         case 'time':
         case 'number':
             if(isNaN(value)) {
-                throw new types.KalturaAPIException(types.KalturaExceptionType.ARGUMENT_MUST_BE_NUMERIC, {argument: arg.name});
+                throw new types.KalturaAPIException(types.ExceptionType.ARGUMENT_MUST_BE_NUMERIC, {argument: arg.name});
             }
             value = parseInt(value);
             if(arg.minValue && value < arg.minValue) {
-                throw new types.KalturaAPIException(types.KalturaExceptionType.ARGUMENT_MIN_VALUE_CROSSED, {argument: arg.name, value: arg.minValue});
+                throw new types.KalturaAPIException(types.ExceptionType.ARGUMENT_MIN_VALUE_CROSSED, {argument: arg.name, value: arg.minValue});
             }
             if(arg.maxValue && value > arg.maxValue) {
-                throw new types.KalturaAPIException(types.KalturaExceptionType.ARGUMENT_MAX_VALUE_CROSSED, {argument: arg.name, value: arg.maxValue});
+                throw new types.KalturaAPIException(types.ExceptionType.ARGUMENT_MAX_VALUE_CROSSED, {argument: arg.name, value: arg.maxValue});
             }
             return value;
 
         case 'string':
             value = value.toString();
             if(arg.minLength && value.length < arg.minLength) {
-                throw new types.KalturaAPIException(types.KalturaExceptionType.ARGUMENT_MIN_LENGTH_CROSSED, {argument: arg.name, value: arg.minLength});
+                throw new types.KalturaAPIException(types.ExceptionType.ARGUMENT_MIN_LENGTH_CROSSED, {argument: arg.name, value: arg.minLength});
             }
             if(arg.maxLength && value.length > arg.maxLength) {
-                throw new types.KalturaAPIException(types.KalturaExceptionType.ARGUMENT_MAX_LENGTH_CROSSED, {argument: arg.name, value: arg.maxLength});
+                throw new types.KalturaAPIException(types.ExceptionType.ARGUMENT_MAX_LENGTH_CROSSED, {argument: arg.name, value: arg.maxLength});
             }
             return value;
             
@@ -64,7 +64,7 @@ function parseValue(arg, value) {
                     return false;
 
                 default:
-                    throw new types.KalturaAPIException(types.KalturaExceptionType.INVALID_AGRUMENT_VALUE, {argument: arg.name, value: 'boolean'});
+                    throw new types.KalturaAPIException(types.ExceptionType.INVALID_AGRUMENT_VALUE, {argument: arg.name, value: 'boolean'});
             }
         
         default:
@@ -72,12 +72,12 @@ function parseValue(arg, value) {
             if(type.type === 'object') {
                 if(value.objectType && value.objectType != type.name) {
                     if(!type.children[value.objectType]) {
-                        throw new types.KalturaAPIException(types.KalturaExceptionType.TYPE_NOT_SUPPORTED, {argument: arg.name, value: value.objectType});
+                        throw new types.KalturaAPIException(types.ExceptionType.TYPE_NOT_SUPPORTED, {argument: arg.name, value: value.objectType});
                     }
                     type = type.children[value.objectType];
                 }
                 if(type.abstract) {
-                    throw new types.KalturaAPIException(types.KalturaExceptionType.ABSTRACT_PARAMETER, {type: type.name});                
+                    throw new types.KalturaAPIException(types.ExceptionType.ABSTRACT_PARAMETER, {type: type.name});                
                 }
                 
                 var obj = new type.class();
@@ -103,7 +103,7 @@ function parseValue(arg, value) {
             }
             else if(type.type === 'enum') {
                 if(!type.enum.exists(value)) {
-                    throw new types.KalturaAPIException(types.KalturaExceptionType.ARGUMENT_STRING_SHOULD_BE_ENUM, {argument: arg.name, enum: type.name});
+                    throw new types.KalturaAPIException(types.ExceptionType.ARGUMENT_STRING_SHOULD_BE_ENUM, {argument: arg.name, enum: type.name});
                 }
                 return value;
             }
@@ -120,7 +120,7 @@ async function handleAction(controllerClass, action, request) {
             args = action.args.map(arg => {   
                 if(request[arg.name] == null || typeof request[arg.name] == 'undefined') {
                     if(!arg.optional) {
-                        throw new types.KalturaAPIException(types.KalturaExceptionType.ARGUMENT_CANNOT_BE_EMPTY, {argument: arg.name});
+                        throw new types.KalturaAPIException(types.ExceptionType.ARGUMENT_CANNOT_BE_EMPTY, {argument: arg.name});
                     }
                     return null;
                 }
@@ -143,16 +143,16 @@ async function handleAction(controllerClass, action, request) {
 
 async function handleRequest(service, action, request) {
     if(!service) {
-        throw new types.KalturaAPIException(types.KalturaExceptionType.INVALID_SERVICE);
+        throw new types.KalturaAPIException(types.ExceptionType.INVALID_SERVICE);
     }
     if(!action) {
-        throw new types.KalturaAPIException(types.KalturaExceptionType.ACTION_NOT_SPECIFIED);
+        throw new types.KalturaAPIException(types.ExceptionType.ACTION_NOT_SPECIFIED);
     }
     if(!Nhoenix.controllers[service]) {
-        throw new types.KalturaAPIException(types.KalturaExceptionType.INVALID_SERVICE, {service: service});
+        throw new types.KalturaAPIException(types.ExceptionType.INVALID_SERVICE, {service: service});
     }
     if(!Nhoenix.controllers[service].actions[action]) {
-        throw new types.KalturaAPIException(types.KalturaExceptionType.INVALID_ACTION, {service: service, action: action});
+        throw new types.KalturaAPIException(types.ExceptionType.INVALID_ACTION, {service: service, action: action});
     }
 
     return await handleAction(Nhoenix.controllers[service].class, Nhoenix.controllers[service].actions[action], request);
@@ -170,7 +170,7 @@ async function handle(service, action, request, response) {
     catch(err) {
         console.error(err);
         if(! err instanceof types.KalturaAPIException) {
-            err = new types.KalturaAPIException(types.KalturaExceptionType.INTERNAL_SERVER_ERROR);
+            err = new types.KalturaAPIException(types.ExceptionType.INTERNAL_SERVER_ERROR);
         }
         response.send({
             executionTime: (Date.now() - response.startTime),
@@ -237,4 +237,5 @@ const Nhoenix = {
     config: config
 }
 
+module.parse = true;
 module.exports = Object.assign(Nhoenix, types);
