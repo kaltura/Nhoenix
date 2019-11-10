@@ -1,17 +1,23 @@
 pipeline {
     agent {
-        docker {
-            label 'Linux'
-            image 'node:10'
-        }
+        label 'Linux'
     }
     options {
         buildDiscarder(logRotator(numToKeepStr:'10'))
     }
     stages {
-        stage('Build'){
+        stage('Build'){			
             steps{
-                sh 'npm test'
+                script {
+                    docker.build("kaltura/nhoenix-$BUILD_NUMBER")
+                }
+            }
+        }
+        stage('Build'){		
+            steps{
+                script {
+                    docker.run("kaltura/nhoenix-$BUILD_NUMBER")
+                }
             }
         }
 	}
