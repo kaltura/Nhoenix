@@ -1,12 +1,15 @@
 pipeline {
     agent {
-        label 'Linux'
+        docker {
+            label 'Linux'
+            image 'node:10'
+        }
     }
     options {
         buildDiscarder(logRotator(numToKeepStr:'10'))
     }
     stages {
-        stage('Build'){			
+        stage('Build'){
             steps{
                 sh 'npm test'
             }
