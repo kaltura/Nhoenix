@@ -13,7 +13,7 @@ pipeline {
                 }
             }
         }
-        stage('Build'){		
+        stage('Test'){		
             steps{
                 script {
                     docker.run("kaltura/nhoenix-$BUILD_NUMBER")
