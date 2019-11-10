@@ -13,10 +13,16 @@ pipeline {
                 }
             }
         }
-        stage('Test'){		
+        stage('Test'){
+            agent {
+                docker {
+                    image "kaltura/nhoenix-$BUILD_NUMBER"
+                    label "$NODE_NAME"
+                }
+            }
             steps{
                 script {
-                    docker.run("kaltura/nhoenix-$BUILD_NUMBER")
+                    sh 'npm test'
                 }
             }
         }
