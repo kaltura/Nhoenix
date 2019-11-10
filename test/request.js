@@ -12,7 +12,7 @@ function writeSource(src) {
 
 describe('requests', function() {
 
-    it('void', function() {
+    it('void', async function() {
         this.timeout(10000);
         const src = `
             /**
@@ -31,11 +31,11 @@ describe('requests', function() {
             module.exports = Controller;`;
 
         Nhoenix.use([writeSource(src)]);            
-        var ret = Nhoenix.test('test', 'doNothing');
+        var ret = await Nhoenix.test('test', 'doNothing');
         assert.strictEqual(ret, null);
     });
     
-    it('null', function() {
+    it('null', async function() {
         this.timeout(10000);
         const src = `
             /**
@@ -58,7 +58,7 @@ describe('requests', function() {
         Nhoenix.use([writeSource(src)]);
         
         try {
-            Nhoenix.test('test', 'doNothing', {myArg: null});
+            await Nhoenix.test('test', 'doNothing', {myArg: null});
         }
         catch(e) {
             assert.equal(e.message, 'Argument [myArg] cannot be empty');
@@ -67,7 +67,7 @@ describe('requests', function() {
         assert.fail('Validation should have fail');
     });
     
-    it('missing', function() {
+    it('missing', async function() {
         this.timeout(10000);
         const src = `
             /**
@@ -90,7 +90,7 @@ describe('requests', function() {
         Nhoenix.use([writeSource(src)]);
         
         try {
-            Nhoenix.test('test', 'doNothing', {});
+            await Nhoenix.test('test', 'doNothing', {});
         }
         catch(e) {
             assert.equal(e.message, 'Argument [myArg] cannot be empty');
@@ -99,7 +99,7 @@ describe('requests', function() {
         assert.fail('Validation should have fail');
     });
 
-    it('optional', function() {
+    it('optional', async function() {
         this.timeout(10000);
         const src = `                 
             /**
@@ -123,16 +123,16 @@ describe('requests', function() {
 
         Nhoenix.use([writeSource(src)]);
 
-        var ret = Nhoenix.test('test', 'doNothing', {myArg: 'set value'});
+        var ret = await Nhoenix.test('test', 'doNothing', {myArg: 'set value'});
         assert.strictEqual(ret, 'set value');
           
-        var ret = Nhoenix.test('test', 'doNothing', {});
+        var ret = await Nhoenix.test('test', 'doNothing', {});
         assert.strictEqual(ret, 'default value');
     });
     
     describe('string', function() {
 
-        it('string', function() {
+        it('string', async function() {
             this.timeout(10000);
             const src = `            
                 /**
@@ -154,11 +154,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: 'my string'});
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: 'my string'});
             assert.strictEqual(ret, 'my string');
         });
         
-        it('int', function() {
+        it('int', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -180,11 +180,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: 123});
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: 123});
             assert.strictEqual(ret, '123');
         });
         
-        it('float', function() {
+        it('float', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -206,11 +206,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: 1.5});
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: 1.5});
             assert.strictEqual(ret, '1.5');
         });
         
-        it('boolean', function() {
+        it('boolean', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -232,14 +232,14 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: true});
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: true});
             assert.strictEqual(ret, 'true');
         });
     });
     
     describe('boolean', function() {
         
-        it('true', function() {
+        it('true', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -261,11 +261,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: true});
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: true});
             assert.strictEqual(ret, true);
         });
         
-        it('false', function() {
+        it('false', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -287,11 +287,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: false});
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: false});
             assert.strictEqual(ret, false);
         });
         
-        it('int true', function() {
+        it('int true', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -313,11 +313,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: 1});
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: 1});
             assert.strictEqual(ret, true);
         });
         
-        it('int false', function() {
+        it('int false', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -339,11 +339,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: 0});
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: 0});
             assert.strictEqual(ret, false);
         });
         
-        it('string true', function() {
+        it('string true', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -365,11 +365,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: 'true'});
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: 'true'});
             assert.strictEqual(ret, true);
         });
         
-        it('string false', function() {
+        it('string false', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -391,11 +391,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: 'false'});
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: 'false'});
             assert.strictEqual(ret, false);
         });
         
-        it('string int true', function() {
+        it('string int true', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -417,11 +417,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: '1'});
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: '1'});
             assert.strictEqual(ret, true);
         });
         
-        it('string int false', function() {
+        it('string int false', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -443,11 +443,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: '0'});
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: '0'});
             assert.strictEqual(ret, false);
         });
         
-        it('int non-boolean', function() {
+        it('int non-boolean', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -471,7 +471,7 @@ describe('requests', function() {
             Nhoenix.use([writeSource(src)]);
             
             try {
-                Nhoenix.test('test', 'doNothing', {myArg: 2});
+                await Nhoenix.test('test', 'doNothing', {myArg: 2});
             }
             catch(e) {
                 assert.equal(e.message, 'Argument [myArg] value must be of type [boolean]');
@@ -480,7 +480,7 @@ describe('requests', function() {
             assert.fail('Validation should have fail');
         });
         
-        it('string non-boolean', function() {
+        it('string non-boolean', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -504,7 +504,7 @@ describe('requests', function() {
             Nhoenix.use([writeSource(src)]);
             
             try {
-                Nhoenix.test('test', 'doNothing', {myArg: 'invalid'});
+                await Nhoenix.test('test', 'doNothing', {myArg: 'invalid'});
             }
             catch(e) {
                 assert.equal(e.message, 'Argument [myArg] value must be of type [boolean]');
@@ -513,7 +513,7 @@ describe('requests', function() {
             assert.fail('Validation should have fail');
         });
         
-        it('object non-boolean', function() {
+        it('object non-boolean', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -537,7 +537,7 @@ describe('requests', function() {
             Nhoenix.use([writeSource(src)]);
             
             try {
-                Nhoenix.test('test', 'doNothing', {myArg: {invalid: 'invalid'}});
+                await Nhoenix.test('test', 'doNothing', {myArg: {invalid: 'invalid'}});
             }
             catch(e) {
                 assert.equal(e.message, 'Argument [myArg] value must be of type [boolean]');
@@ -549,7 +549,7 @@ describe('requests', function() {
     
     describe('number', function() {
         
-        it('int', function() {
+        it('int', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -571,11 +571,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: 35});
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: 35});
             assert.strictEqual(ret, 35);
         });
         
-        it('string', function() {
+        it('string', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -597,11 +597,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: '45'});
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: '45'});
             assert.strictEqual(ret, 45);
         });
         
-        it('NaN', function() {
+        it('NaN', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -625,7 +625,7 @@ describe('requests', function() {
             Nhoenix.use([writeSource(src)]);
             
             try {
-                Nhoenix.test('test', 'doNothing', {myArg: 'string'});
+                await Nhoenix.test('test', 'doNothing', {myArg: 'string'});
             }
             catch(e) {
                 assert.equal(e.message, 'Argument [myArg] must be numeric');
@@ -637,7 +637,7 @@ describe('requests', function() {
     
     describe('time', function() {
         
-        it('int', function() {
+        it('int', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -659,11 +659,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: 35});
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: 35});
             assert.strictEqual(ret, 35);
         });
         
-        it('string', function() {
+        it('string', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -685,11 +685,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: '45'});
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: '45'});
             assert.strictEqual(ret, 45);
         });
         
-        it('NaN', function() {
+        it('NaN', async function() {
             this.timeout(10000);
             const src = `
                 /**
@@ -713,7 +713,7 @@ describe('requests', function() {
             Nhoenix.use([writeSource(src)]);
             
             try {
-                Nhoenix.test('test', 'doNothing', {myArg: 'string'});
+                await Nhoenix.test('test', 'doNothing', {myArg: 'string'});
             }
             catch(e) {
                 assert.equal(e.message, 'Argument [myArg] must be numeric');
@@ -726,7 +726,7 @@ describe('requests', function() {
     
     describe('object', function() {
         
-        it('simple', function() {
+        it('simple', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -763,14 +763,14 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: {
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: {
                 objectType: 'KalturaTest',
                 test: 123
             }});
             assert.strictEqual(ret, 123);
         });
         
-        it('untyped object', function() {
+        it('untyped object', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -807,13 +807,13 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: {
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: {
                 test: 123
             }});
             assert.strictEqual(ret, 123);
         });
         
-        it('extended object', function() {
+        it('extended object', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -866,7 +866,7 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: {
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: {
                 objectType: 'KalturaExtended',
                 test1: 123,
                 test2: 456,
@@ -874,7 +874,7 @@ describe('requests', function() {
             assert.strictEqual(ret, 456);
         });
         
-        it('double extended object', function() {
+        it('double extended object', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -943,7 +943,7 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: {
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: {
                 objectType: 'KalturaExtendedAgain',
                 test1: 123,
                 test2: 456,
@@ -951,7 +951,7 @@ describe('requests', function() {
             }});
             assert.strictEqual(ret, 789);
             
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: {
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: {
                 objectType: 'KalturaExtended',
                 test1: 123,
                 test2: 456,
@@ -960,7 +960,7 @@ describe('requests', function() {
             assert.strictEqual(ret, 456);
         });
         
-        it('nested object', function() {
+        it('nested object', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -1010,7 +1010,7 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: {
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: {
                 nested: {
                     test: 123
                 }
@@ -1018,7 +1018,7 @@ describe('requests', function() {
             assert.strictEqual(ret, 123);
         });
         
-        it('extended nested object', function() {
+        it('extended nested object', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -1084,7 +1084,7 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: {
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: {
                 nested: {
                     objectType: 'KalturaExtendedNested',
                     test1: 123,
@@ -1094,7 +1094,7 @@ describe('requests', function() {
             assert.strictEqual(ret, 456);
         });
 
-        it('abstract extended object', function() {
+        it('abstract extended object', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -1148,7 +1148,7 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: {
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: {
                 objectType: 'KalturaExtended',
                 test1: 123,
                 test2: 456,
@@ -1156,7 +1156,7 @@ describe('requests', function() {
             assert.strictEqual(ret, 456);
         });
 
-        it('abstract object', function() {
+        it('abstract object', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -1212,7 +1212,7 @@ describe('requests', function() {
             Nhoenix.use([writeSource(src)]);            
             
             try {
-                Nhoenix.test('test', 'doNothing', {myArg: {}});
+                await Nhoenix.test('test', 'doNothing', {myArg: {}});
             }
             catch(e) {
                 assert.equal(e.message, 'Abstract parameter type [KalturaTest]');
@@ -1221,7 +1221,7 @@ describe('requests', function() {
             assert.fail('Validation should have fail');
         });
 
-        it('abstract nested extended object', function() {
+        it('abstract nested extended object', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -1285,7 +1285,7 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: {
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: {
                 nested: {
                     objectType: 'KalturaExtendedNested',
                     test1: 123
@@ -1294,7 +1294,7 @@ describe('requests', function() {
             assert.strictEqual(ret, 123);
         });
 
-        it('abstract nested object', function() {
+        it('abstract nested object', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -1360,7 +1360,7 @@ describe('requests', function() {
             Nhoenix.use([writeSource(src)]);            
             
             try {
-                Nhoenix.test('test', 'doNothing', {myArg: {
+                await Nhoenix.test('test', 'doNothing', {myArg: {
                     nested: {
                         test1: 123
                     }
@@ -1373,7 +1373,7 @@ describe('requests', function() {
             assert.fail('Validation should have fail');
         });
 
-        it('default property', function() {
+        it('default property', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -1416,11 +1416,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: {}});
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: {}});
             assert.strictEqual(ret, 123);
         });
 
-        it('property restrictions', function() {
+        it('property restrictions', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -1469,14 +1469,14 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {myArg: {
+            var ret = await Nhoenix.test('test', 'doNothing', {myArg: {
                 int: 4,
                 str: '1234'
             }});
             assert.strictEqual(ret, '1234:4');
             
             try {
-                Nhoenix.test('test', 'doNothing', {myArg: {
+                await Nhoenix.test('test', 'doNothing', {myArg: {
                     int: 2,
                     str: '1234'
                 }});
@@ -1487,7 +1487,7 @@ describe('requests', function() {
             }
 
             try {
-                Nhoenix.test('test', 'doNothing', {myArg: {
+                await Nhoenix.test('test', 'doNothing', {myArg: {
                     int: 8,
                     str: '1234'
                 }});
@@ -1498,7 +1498,7 @@ describe('requests', function() {
             }
 
             try {
-                Nhoenix.test('test', 'doNothing', {myArg: {
+                await Nhoenix.test('test', 'doNothing', {myArg: {
                     int: 4,
                     str: '12'
                 }});
@@ -1509,7 +1509,7 @@ describe('requests', function() {
             }
 
             try {
-                Nhoenix.test('test', 'doNothing', {myArg: {
+                await Nhoenix.test('test', 'doNothing', {myArg: {
                     int: 4,
                     str: '123456'
                 }});
@@ -1520,7 +1520,7 @@ describe('requests', function() {
             }
         });
 
-        it('args restrictions', function() {
+        it('args restrictions', async function() {
             this.timeout(10000);
             const src = `                  
                 /**
@@ -1543,14 +1543,14 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {
+            var ret = await Nhoenix.test('test', 'doNothing', {
                 int: 4,
                 str: '1234'
             });
             assert.strictEqual(ret, '1234:4');
             
             try {
-                Nhoenix.test('test', 'doNothing', {
+                await Nhoenix.test('test', 'doNothing', {
                     int: 2,
                     str: '1234'
                 });
@@ -1561,7 +1561,7 @@ describe('requests', function() {
             }
 
             try {
-                Nhoenix.test('test', 'doNothing', {
+                await Nhoenix.test('test', 'doNothing', {
                     int: 8,
                     str: '1234'
                 });
@@ -1572,7 +1572,7 @@ describe('requests', function() {
             }
 
             try {
-                Nhoenix.test('test', 'doNothing', {
+                await Nhoenix.test('test', 'doNothing', {
                     int: 4,
                     str: '12'
                 });
@@ -1583,7 +1583,7 @@ describe('requests', function() {
             }
 
             try {
-                Nhoenix.test('test', 'doNothing', {
+                await Nhoenix.test('test', 'doNothing', {
                     int: 4,
                     str: '123456'
                 });
@@ -1597,7 +1597,7 @@ describe('requests', function() {
     
     describe('enum', function() {
         
-        it('string', function() {
+        it('string', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -1631,11 +1631,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {val: 'abc'});
+            var ret = await Nhoenix.test('test', 'doNothing', {val: 'abc'});
             assert.strictEqual(ret, 'abc');
         });
         
-        it('property', function() {
+        it('property', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -1682,7 +1682,7 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {
+            var ret = await Nhoenix.test('test', 'doNothing', {
                 obj: {
                     test: 'abc'
                 }
@@ -1690,7 +1690,7 @@ describe('requests', function() {
             assert.strictEqual(ret, 'abc');
         });
 
-        it('invalid string', function() {
+        it('invalid string', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -1726,7 +1726,7 @@ describe('requests', function() {
             Nhoenix.use([writeSource(src)]);            
                         
             try {
-                Nhoenix.test('test', 'doNothing', {val: 'abcd'});
+                await Nhoenix.test('test', 'doNothing', {val: 'abcd'});
                 assert.fail('Validation should have fail');
             }
             catch(e) {
@@ -1734,7 +1734,7 @@ describe('requests', function() {
             }
         });
         
-        it('invalid property', function() {
+        it('invalid property', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -1783,7 +1783,7 @@ describe('requests', function() {
             Nhoenix.use([writeSource(src)]);
                     
             try {
-                Nhoenix.test('test', 'doNothing', {
+                await Nhoenix.test('test', 'doNothing', {
                     obj: {
                         test: 'abcd'
                     }
@@ -1795,7 +1795,7 @@ describe('requests', function() {
             }
         });
         
-        it('numeric', function() {
+        it('numeric', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -1829,11 +1829,11 @@ describe('requests', function() {
                 module.exports = Controller;`;
 
             Nhoenix.use([writeSource(src)]);            
-            var ret = Nhoenix.test('test', 'doNothing', {val: 123});
+            var ret = await Nhoenix.test('test', 'doNothing', {val: 123});
             assert.strictEqual(ret, 123);
         });
         
-        it('invalid numeric', function() {
+        it('invalid numeric', async function() {
             this.timeout(10000);
             const src = `
                 const Nhoenix = require('${path.resolve('./').replace(/\\/g, '\\\\')}');
@@ -1869,7 +1869,7 @@ describe('requests', function() {
             Nhoenix.use([writeSource(src)]);            
                         
             try {
-                Nhoenix.test('test', 'doNothing', {val: 1234});
+                await Nhoenix.test('test', 'doNothing', {val: 1234});
                 assert.fail('Validation should have fail');
             }
             catch(e) {
