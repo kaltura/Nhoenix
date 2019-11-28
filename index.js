@@ -193,15 +193,15 @@ const Nhoenix = {
     Controller: Controller,
 
     start: () => {
-        app.post(config.basePath, async (request, response) => {
+        app.post(config.get('basePath'), async (request, response) => {
             await handle(request.body.service, request.body.action, request.body, response);
         });
         
-        app.post(`${config.basePath}/service/:service/action/:action`, async (request, response) => {
+        app.post(`${config.get('basePath')}/service/:service/action/:action`, async (request, response) => {
             await handle(request.params.service, request.params.action, request.body, response);
         });
         
-        app.listen(config.http.port);
+        app.listen(config.get('http.port'));
     },
 
     configure: options => {
